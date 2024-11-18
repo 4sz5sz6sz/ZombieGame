@@ -1,0 +1,527 @@
+﻿// ArrowKeyGameDlg.cpp: 구현 파일
+//
+//OutputDebugString(_T("테스트내용\n"));
+
+#include "pch.h"
+#include "ZombieGame.h"
+#include "afxdialogex.h"
+#include "ArrowKeyGameDlg.h"
+#include "ZombieMovement.h"
+#include "CYellowMaterial.h"
+#include <algorithm>	//max 함수
+#include <chrono>	//시간 함수
+
+
+// ArrowKeyGameDlg 대화 상자
+
+IMPLEMENT_DYNAMIC(CArrowKeyGameDialog, CDialogEx)
+
+CArrowKeyGameDialog::CArrowKeyGameDialog(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_ARROW_KEY_DIALOG, pParent),
+	player(8, 8),
+	remainingCooldownTime(0),
+	isCooldownActive(false),
+	playerInSafeZone(false),
+	collectedYellowMaterialCount(0),
+	activeSafeZoneCount(0)
+{
+	isGameOver = false;
+	squareSize = 20;         // 네모의 크기
+	m_ptLocation = (0, 0);
+	moveUp = false;
+	moveDown = false;
+	moveLeft = false;
+	moveRight = false;
+	moveSpeed = 0.4;	//0.4 추천
+	safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
+	safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
+	UINT_PTR m_nTimerID;
+
+}
+
+CArrowKeyGameDialog::~CArrowKeyGameDialog()
+{
+}
+
+void CArrowKeyGameDialog::DoDataExchange(CDataExchange* pDX)
+{
+	CDialogEx::DoDataExchange(pDX);
+}
+
+
+BEGIN_MESSAGE_MAP(CArrowKeyGameDialog, CDialogEx)
+	ON_WM_PAINT()
+	ON_WM_KEYDOWN()
+	ON_WM_KEYUP()
+	ON_BN_CLICKED(IDOK, &CArrowKeyGameDialog::OnBnClickedOk)
+	ON_WM_CREATE()
+	ON_WM_TIMER()
+	ON_WM_GETDLGCODE()
+END_MESSAGE_MAP()
+
+
+// ArrowKeyGameDlg 메시지 처리기
+
+
+void CArrowKeyGameDialog::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	// 그리기 메시지에 대해서는 CDialogEx::OnPaint()을(를) 호출하지 마십시오.
+
+	for (auto& material : yellowMaterials) {
+		if (!material.collected) {
+			dc.FillSolidRect(
+				material.x * SCALE_FACTOR,
+				material.y * SCALE_FACTOR,
+				SCALE_FACTOR,
+				SCALE_FACTOR,
+				RGB(255, 255, 0)); //노란색 네모 그리기
+		}
+	}
+	
+	for (auto& zone : safeZones) {
+		if (zone.isDestroyed) continue;
+		int alpha = (int)(255 * zone.alpha / 255);
+		alpha = max(20, alpha);	//하한 20
+		CBrush safeZoneBrush(RGB(0, alpha, 0)); //연한 초록색.
+		dc.FillRect(zone.rect, &safeZoneBrush);
+		
+	}
+
+	//파란색 네모 그리기
+	dc.FillSolidRect(
+		player.x * SCALE_FACTOR, 
+		player.y * SCALE_FACTOR, 
+		SCALE_FACTOR, 
+		SCALE_FACTOR, 
+		RGB(0, 0, 255)
+	); //파란색 네모
+
+	for (auto& zombie : zombies) {
+		dc.FillSolidRect(zombie.x * SCALE_FACTOR, 
+			zombie.y * SCALE_FACTOR, 
+			SCALE_FACTOR, 
+			SCALE_FACTOR, 
+			RGB(255, 0, 0)	//빨간색 네모
+		);
+	}
+
+	//체력 표시
+	CString hpText;
+	hpText.Format(_T("HP: %.0f%%"), player.HP);
+	//CRect hpRect(500, 20, 600, 50); //1시 방향
+	CRect hpRect(
+		player.x * SCALE_FACTOR + SCALE_FACTOR + 10, // 플레이어 오른쪽에 약간 띄워 표시
+		player.y * SCALE_FACTOR,
+		player.x * SCALE_FACTOR + SCALE_FACTOR + 80,
+		player.y * SCALE_FACTOR + 20
+	);
+	dc.SetBkMode(TRANSPARENT);	//투명 배경
+	//dc.SetTextColor(RGB(255, 0, 0)); //빨간색 텍스트
+	dc.SetTextColor(RGB(255, 165, 0)); //주황색 텍스트
+	dc.DrawText(hpText, &hpRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+	//최근에 생성된 안전지대 위에 쿨타임 출력
+	if (!safeZones.empty()) {
+		CSafeZone latestZone = safeZones.back();  //가장 최근에 생성된 안전지대
+
+		//남은 쿨타임 계산
+		remainingCooldownTime = player.GetRemainingCooldownTime();
+		if (remainingCooldownTime > 0) {
+			CString timeText;
+			dc.SetTextColor(RGB(0, 0, 0)); //검은색 텍스트
+			timeText.Format(_T("%.1f 초"), remainingCooldownTime);
+
+			CRect textRect = latestZone.rect;
+			textRect.top -= 20;  //텍스트 위치를 안전지대 위로 조정
+			dc.SetBkMode(TRANSPARENT);
+			dc.DrawText(timeText, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+		}
+	}
+
+	//DrawHUD(dc);
+}
+
+
+void CArrowKeyGameDialog::UpdateMovement()
+{
+	// TODO: 여기에 구현 코드 추가.
+	double dx = 0, dy = 0;
+	if (moveUp) {
+		dy -= moveSpeed;
+		
+	}
+	if (moveDown) {
+		dy += moveSpeed;
+		//CString debugMsg;
+		//debugMsg.Format(L"dy: %d", dy);  // 키 값 확인용 메시지
+		//AfxMessageBox(debugMsg);
+	}
+	if (moveLeft) {
+		dx -= moveSpeed;
+	}
+	if (moveRight) {
+		dx += moveSpeed;
+	}
+	
+	//대각선 이동할 때 속도가 루트2(배) 만큼 빨라지는 현상 보정.
+	if (dx && dy) {	//대각선 이동일 때 속도 보정. 각 성분이 2로 보정됨. 체감 속도는 2루트2,
+		//double length = sqrt(dx * dx + dy * dy);
+		//double scalingFactor = (double)moveSpeed / length;
+		//double scalingFactor = 1/sqrt(2);
+		dx = dx / sqrt(2);
+		dy = dy / sqrt(2);
+	}
+
+	//// dx, dy 값을 출력
+	/*CString debugMsg;
+	debugMsg.Format(_T("dx: %f, dy: %f\n"), dx, dy);
+	OutputDebugString(debugMsg);*/
+
+	if (dx || dy) MovePlayer(dx, dy);
+
+	Invalidate();	//화면 업데이트, 네모 표시
+}
+
+
+
+void CArrowKeyGameDialog::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	switch (nChar)					// 가상키 코드 값에 대해 
+	{
+	case VK_LEFT:					// 왼쪽 화살표 키를 누를 때
+		moveLeft = false;
+		break;
+	case VK_RIGHT:				// 오른쪽 화살표 키를 누를 때
+		moveRight = false;
+		break;
+	case VK_UP:					// 위쪽 화살표 키를 누를 때
+		moveUp = false;
+		break;
+	case VK_DOWN:				// 아래쪽 화살표 키를 누를 때
+		moveDown = false;
+		break;
+	case VK_PRIOR:					// Pg up 키를 누를 때
+		//m_ptLocation.y -= 50;			// 위쪽으로 50픽셀 이동
+		//moveLeft = false;
+		break;
+	case VK_NEXT:					// Pg dn 키를 누를 때
+		//m_ptLocation.y += 50;			// 아래쪽으로 50픽셀 이동
+		break;
+	case VK_HOME:					// Home 키를 누를 때
+		//m_ptLocation = CPoint(0, 0);		// 처음 위치로 이동
+		break;
+	}
+	CDialogEx::OnKeyUp(nChar, nRepCnt, nFlags);
+}
+
+
+void CArrowKeyGameDialog::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	//CString debugMsg;
+	//debugMsg.Format(L"Key Pressed: %d", nChar);  // 키 값 확인용 메시지
+	//AfxMessageBox(debugMsg);
+
+
+	switch (nChar)					// 가상키 코드 값에 대해 
+	{
+	case VK_LEFT:					// 왼쪽 화살표 키를 누를 때
+		moveLeft = true;
+		break;
+	case VK_RIGHT:				// 오른쪽 화살표 키를 누를 때
+		moveRight = true;
+		break;
+	case VK_UP:					// 위쪽 화살표 키를 누를 때
+		moveUp = true;
+		break;
+	case VK_DOWN:				// 아래쪽 화살표 키를 누를 때
+		moveDown = true;
+		break;
+	case VK_PRIOR:					// Pg up 키를 누를 때
+		//m_ptLocation.y -= 50;			// 위쪽으로 50픽셀 이동
+		//moveLeft = true;
+		break;
+	case VK_NEXT:					// Pg dn 키를 누를 때
+		//m_ptLocation.y += 50;			// 아래쪽으로 50픽셀 이동
+		break;
+	case VK_HOME:					// Home 키를 누를 때
+		//m_ptLocation = CPoint(0, 0);		// 처음 위치로 이동
+		break;
+	}
+	if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { // Ctrl 키를 누를 때
+		/*OutputDebugString(_T("Ctrl 키가 눌렸습니다. 안전지대를 설치합니다.\n"));*/
+		player.TryToPlaceSafeZone(this, zombies, safeZones);	//안전지대 설치
+	}
+	CDialogEx::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CArrowKeyGameDialog::OnBnClickedOk()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	
+	CDialogEx::OnOK();
+}
+
+
+int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CDialogEx::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
+	MoveWindow(0, 0, 800, 600);	//원하는 창 크기
+	playerRect = CRect(100, 100, 120, 120); // 플레이어 초기위치와 크기 설정
+	CRect safeZone(100, 100, 200, 200); // 안전지대의 위치와 크기 설정
+
+
+	CRect progressRect(10, 10, 200, 30);  // 프로그레스 바의 위치와 크기 설정
+	cooldownProgressBar.Create(WS_CHILD | WS_VISIBLE | PBS_SMOOTH, progressRect, this, 1);  // WS_TABSTOP 제거
+	cooldownProgressBar.EnableWindow(FALSE);  // 비활성화
+	cooldownProgressBar.SetRange(0, 100);  // 범위 설정: 0 ~ 100%
+	cooldownProgressBar.SetPos(0);  // 초기값 설정
+	//cooldownProgressBar.SendMessage(PBM_SETBARCOLOR, 0, RGB(255, 0, 0)); // 빨간색 설정했는데... 안 먹힘..
+
+	zombies.push_back(CZombie(12, 10,1));
+	zombies.push_back(CZombie(15, 10,2));
+	zombies.push_back(CZombie(10, 15,3));
+	GenerateYellowMaterials(10);           // 노란재료 10개 생성
+	SetTimer(1, 30, NULL);	//30ms에 한번 업데이트.
+
+	return 0;
+}
+
+
+void CArrowKeyGameDialog::MovePlayer(double dx, double dy)
+{
+	// TODO: 여기에 구현 코드 추가.
+	playerRect.OffsetRect(dx, dy);	//네모위치이동
+	player.x += dx; // playerX 좌표 갱신
+	player.y += dy; // playerY 좌표 갱신
+	Invalidate();	//OnPaint() 호출
+}
+
+
+
+void CArrowKeyGameDialog::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (nIDEvent == 1)  // 타이머 ID가 1인 경우, UpdateMovement() 호출
+	{
+		for (auto& zombie : zombies) {
+			zombie.MoveTowards(player.x, player.y,zombies,safeZones);
+		}
+		UpdateMovement();	//위치 갱신
+		UpdatePlayerHP(); // 체력 갱신
+		UpdateCooldown();	//???? 쿨타임 갱신.
+		CheckPlayerMaterialCollision(); // 플레이어와 재료 충돌 확인
+		CheckPlayerOnSafeZones(); // 플레이어가 안전지대를 밟고 있는지 확인
+		Invalidate();  //화면 갱신
+	}
+	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+UINT CArrowKeyGameDialog::OnGetDlgCode()
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	//return CDialogEx::OnGetDlgCode();
+	//방향키 입력을 받아들일 수 있도록 함.
+	//이거 없으면 방향키 입력 못 받음.
+	return DLGC_WANTARROWS;	
+}
+
+
+void CArrowKeyGameDialog::UpdateCooldown()
+{
+	if (isCooldownActive)
+	{
+		/*auto now = std::chrono::steady_clock::now();
+		std::chrono::duration<double> elapsed = now - lastSafeZoneTime;
+		remainingCooldownTime = max(3.0 - elapsed.count(), 0.0);*/
+		//std::max 쓰면 에러발생.
+		remainingCooldownTime = player.GetRemainingCooldownTime();
+
+		// 프로그레스 바 업데이트, 0~100사이의 값을 가짐.
+		int progress = (int)((remainingCooldownTime) / 3.0 * 100.0);
+		//int progress = (int)((3.0-remainingCooldownTime) / 3.0 * 100.0);
+
+		/*CString debugMsg;
+		debugMsg.Format(_T("cooldownStartTime: %.2f, now: %.2f, elapsed: %.2f, remainingCooldownTime: %.2f\n"),
+			std::chrono::duration<double>(player.lastSafeZoneTime.time_since_epoch()).count(),
+			std::chrono::duration<double>(now.time_since_epoch()).count(),
+			elapsed.count(),
+			remainingCooldownTime);
+		OutputDebugString(debugMsg);*/
+
+
+		cooldownProgressBar.SetPos(progress);
+
+		if (remainingCooldownTime <= 0.0)
+		{
+			isCooldownActive = false;
+			remainingCooldownTime = 0.0;
+			cooldownProgressBar.SetPos(0);  // 쿨타임이 끝나면 프로그레스 바 초기화
+		}
+
+		cooldownProgressBar.RedrawWindow();
+	}
+}
+
+// 안전지대 업데이트
+void CArrowKeyGameDialog::UpdateSafeZones()
+{
+	// TODO: 여기에 구현 코드 추가.
+	//아직 미정..
+}
+
+
+// 플레이어가 안전지대에 있는지 검사하는 함수, 
+void CArrowKeyGameDialog::CheckPlayerOnSafeZones()
+{
+	// TODO: 여기에 구현 코드 추가.
+	bool onAnySafeZone = false;
+
+	for (auto& zone : safeZones) {
+		if (!zone.isDestroyed && player.CheckCollision(player.x,player.y,zone.rect)){	//만약 안전지대를 밟고 있다면
+			if (!playerInSafeZone) { 
+				//플레이어가 안전지대에 처음 들어감
+				playerInSafeZone = true;
+				playerEnterTime = std::chrono::steady_clock::now();
+			}
+			else {
+				//플레이어가 계속 안전지대에 있음
+				auto now = std::chrono::steady_clock::now();
+				std::chrono::duration<double> elapsed = now - playerEnterTime;
+
+				//투명도 업데이트
+				zone.alpha = (int)((1.0 - elapsed.count() / K_SECONDS) * 255);
+				zone.alpha = max(zone.alpha, 20); //하한 20
+
+				//k초 이상 머물렀으면 안전지대 파괴
+				if (elapsed.count() >= K_SECONDS) {
+					OutputDebugString(_T("안전지대가 파괴되었습니다.\n"));
+					zone.isDestroyed = true;
+					zone.rect = CRect(-1000, -1000, -900, -900); // 안전지대를 화면 밖으로 보냄.
+					activeSafeZoneCount--;
+					playerInSafeZone = false; // 플레이어가 안전지대를 벗어난 것으로 처리
+				}
+			}
+			onAnySafeZone = true;
+			break;
+		}
+	}
+
+	if (!onAnySafeZone) {
+		playerInSafeZone = false; //플레이어가 안전지대를 벗어났음
+		//모든 안전지대의 투명도 복구
+		for (auto& zone : safeZones) {
+			if (zone.isDestroyed) continue;
+			zone.alpha = 255;
+		}
+	}
+}
+
+
+
+// 노란재료 생성
+void CArrowKeyGameDialog::GenerateYellowMaterials(int count)
+{
+	// TODO: 여기에 구현 코드 추가.
+	srand((unsigned)time(NULL)); // 랜덤 시드 설정
+
+	for (int i = 0; i < count; ++i) {
+		//double x = (rand() % 40 + 5) * 0.5;
+		//double y = (rand() % 30 + 5) * 0.5;
+		double x, y;
+		//double x = 37;
+		//double y = 26;
+		int cnt = 0;
+		while (++cnt) {
+			x = (rand() % 37) * 1;
+			y = (rand() % 26) * 1;
+			//100번 넘게 재실행 된다면, 그냥 인정하고 생성시키기
+			if (cnt>100) break;
+
+			//스폰 지점이 거리 10 이내에 가까이 있다면,리롤
+			if (player.CheckCollision(x, y, player, 10)) continue;
+			
+			//스폰 지점이 안전지대 내부에 있다면, 리롤.
+			bool ret = false;
+			for (auto& zone : safeZones) {
+				//정적 메소드 처럼 그냥 player의 멤버함수를 호출함. 
+				//실제로는 노란재료-안전지대 간의 위치관계 검사. 
+				//player의 위치정보와는 무관함.
+				if (player.CheckCollision(x, y, zone.rect)) {
+					ret = true;
+					break;
+				}
+			}
+			if (ret) continue;
+
+			//여기까지 continue 안되고 무사히 진행됐으면 x y 값 확정짓고 마무리.
+			break;
+		}
+		yellowMaterials.emplace_back(x, y);
+	}
+}
+
+
+void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
+{
+	// TODO: 여기에 구현 코드 추가.
+	for (auto& material : yellowMaterials) {
+		if (!material.collected && material.CheckCollisionWithPlayer(player.x, player.y)) {
+			material.collected = true; // 수집 처리
+			++collectedYellowMaterialCount;
+
+			CString debugMsg;
+			debugMsg.Format(_T("재료를 획득했습니다! 현재 획득한 재료 수: %d\n"), collectedYellowMaterialCount);
+			OutputDebugString(debugMsg);
+
+			// 게임 목표 달성 확인
+			if (collectedYellowMaterialCount >= 10) {
+				OutputDebugString(_T("목표 달성! 모든 재료를 획득했습니다!\n"));
+				AfxMessageBox(_T("목표 달성! 모든 재료를 획득했습니다!"));
+				isGameOver = true;
+				// 추가 처리 (게임 종료, 다음 스테이지 등)
+			}
+		}
+	}
+}
+
+
+// Player-Zombie 충돌에 따른 체력 업데이트
+void CArrowKeyGameDialog::UpdatePlayerHP()
+{
+	// TODO: 여기에 구현 코드 추가.
+	if (isGameOver) return;
+	bool isCollision = false;
+
+	//충돌 여부 검사
+	for (auto& zombie : zombies) {
+		if (player.CheckCollision(player.x, player.y, zombie)) {
+			isCollision = true;
+			break;
+		}
+	}
+
+	//충돌 여부에 따라 체력 조정
+	if (isCollision) {
+		player.TakeDamage(); //충돌 시 체력 5 감소
+	}
+	else {
+		player.Heal(); //충돌하지 않을 때 체력 0.1 회복
+	}
+
+	//게임 오버
+	if (!isGameOver && !player.IsAlive()) {
+		isGameOver = true;
+		AfxMessageBox(_T("게임 오버! 체력이 0이 되었습니다."));
+		//추가적인 게임 오버 처리
+	}
+}
