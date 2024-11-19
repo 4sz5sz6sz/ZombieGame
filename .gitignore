@@ -1,1 +1,39 @@
+# Visual Studio 관련
 .vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+
+# 빌드 출력
+Debug/
+Release/
+x64/
+bin/
+obj/
+out/
+
+# 임시 및 로그 파일
+*.pch
+*.pdb
+*.log
+*.tlog
+*.ipch
+*.tmp
+*.ilk
+*.idb
+*.swp
+
+# 리소스 및 프로파일링
+*.manifest
+*.aps
+*.res
+*.pgc
+*.pgd
+
+# 백업 및 기타
+*.bak
+*.old
+*.orig
+Thumbs.db
+Desktop.ini
