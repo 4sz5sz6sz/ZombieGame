@@ -10,11 +10,11 @@
 #define IDD_DIALOG_SAFE                 130
 #define IDD_DIALOG_CHEST                135
 #define IDD_DIALOG1                     137
-#define IDD_DIALOG_VACCINE              137
 #define IDD_DIALOG_SEQUENCE             137
 #define IDD_DIALOG2                     139
 #define IDD_DIALOG_MACHINE              139
 #define IDD_DIALOG3                     141
+#define IDD_DIALOG_SURAB                143
 #define IDC_BUTTON_DOOR                 1000
 #define IDC_BUTTON_DRAWER               1001
 #define IDC_BUTTON_SAFE                 1002
@@ -24,6 +24,7 @@
 #define IDD_ARROW_KEY_DIALOG            1006
 #define IDC_LIST1                       1007
 #define IDC_COMBO1                      1008
+#define IDC_LIST3                       1008
 #define IDC_COMBO2                      1009
 #define IDC_COMBO3                      1010
 #define IDC_COMBO4                      1011
@@ -67,7 +68,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        143
+#define _APS_NEXT_RESOURCE_VALUE        145
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           101
