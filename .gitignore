@@ -37,3 +37,14 @@ out/
 *.orig
 Thumbs.db
 Desktop.ini
+
+# 빌드 결과 파일 제외
+*.obj
+*.ilk
+*.idb
+*.pdb
+*.exe
+*.log
+Debug/
+Release/
+x64/
