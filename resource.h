@@ -10,7 +10,10 @@
 #define IDD_DIALOG_SAFE                 130
 #define IDD_DIALOG_CHEST                135
 #define IDD_DIALOG1                     137
+#define IDD_DIALOG_VACCINE              137
+#define IDD_DIALOG_SEQUENCE             137
 #define IDD_DIALOG2                     139
+#define IDD_DIALOG_MACHINE              139
 #define IDD_DIALOG3                     141
 #define IDC_BUTTON_DOOR                 1000
 #define IDC_BUTTON_DRAWER               1001
