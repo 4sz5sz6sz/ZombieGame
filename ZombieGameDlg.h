@@ -50,4 +50,6 @@ public:
 
 	afx_msg void OnBnClickedButtonVaccineManfacturingMachine();
 	afx_msg void OnBnClickedButtonDoor();
+	CListBox m_listInven;
+	CString m_strInven[10];
 };

@@ -21,4 +21,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
+public:
+	CListBox m_listSurabInven;
+	CListBox m_listSurab;
+	CString m_strSurabInven;
 };

@@ -24,6 +24,8 @@ CSurabDlg::~CSurabDlg()
 void CSurabDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST_SURABINVEN, m_listSurabInven);
+	DDX_Control(pDX, IDC_LIST_SURAB, m_listSurab);
 }
 
 

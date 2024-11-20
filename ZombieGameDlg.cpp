@@ -10,6 +10,7 @@
 #include "CSequenceDlg.h"
 #include "CManufacture.h"
 #include "ArrowKeyGameDlg.h"
+#include "CSurabDlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -63,6 +64,7 @@ CZombieGameDlg::CZombieGameDlg(CWnd* pParent /*=nullptr*/)
 void CZombieGameDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST_INVEN, m_listInven);
 }
 
 BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
@@ -235,3 +237,4 @@ void CZombieGameDlg::OnBnClickedButtonDoor()
 	CArrowKeyGameDialog arrowKeyDialog;
 	arrowKeyDialog.DoModal(); // 모달 창으로 표시
 }
+
