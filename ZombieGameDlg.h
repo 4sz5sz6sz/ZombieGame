@@ -37,7 +37,6 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedButtonDrawer();
 	afx_msg void OnBnClickedButtonSafe();
 	
 	bool m_bUnitViewed; // 금고 버튼 bool 변수
@@ -52,4 +51,5 @@ public:
 	afx_msg void OnBnClickedButtonDoor();
 	CListBox m_listInven;
 	CString m_strInven[10];
+	afx_msg void OnBnClickedButtonDrawer();
 };

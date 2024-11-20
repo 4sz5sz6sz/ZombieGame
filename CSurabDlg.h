@@ -24,5 +24,5 @@ protected:
 public:
 	CListBox m_listSurabInven;
 	CListBox m_listSurab;
-	CString m_strSurabInven;
+	CString m_strSurabInven[10];
 };
