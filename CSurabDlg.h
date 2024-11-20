@@ -21,9 +21,4 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
-public:
-	virtual BOOL OnInitDialog();
-	CListBox m_listSurab;
-	CListBox m_listSurabInven;
-	CString m_strInven[10];
 };

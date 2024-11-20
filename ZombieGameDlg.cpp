@@ -10,8 +10,6 @@
 #include "CSequenceDlg.h"
 #include "CManufacture.h"
 #include "ArrowKeyGameDlg.h"
-#include "CSurabDlg.h"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -65,7 +63,6 @@ CZombieGameDlg::CZombieGameDlg(CWnd* pParent /*=nullptr*/)
 void CZombieGameDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST_INVEN, m_listInven);
 }
 
 BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
@@ -76,7 +73,6 @@ BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_CHEST, &CZombieGameDlg::OnClickedButtonChest)
 	ON_BN_CLICKED(IDC_BUTTON_VACCINE_MANFACTURING_MACHINE, &CZombieGameDlg::OnBnClickedButtonVaccineManfacturingMachine)
 	ON_BN_CLICKED(IDC_BUTTON_DOOR, &CZombieGameDlg::OnBnClickedButtonDoor)
-	ON_BN_CLICKED(IDC_BUTTON_DRAWER, &CZombieGameDlg::OnBnClickedButtonDrawer)
 END_MESSAGE_MAP()
 
 
@@ -238,22 +234,4 @@ void CZombieGameDlg::OnBnClickedButtonDoor()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	CArrowKeyGameDialog arrowKeyDialog;
 	arrowKeyDialog.DoModal(); // 모달 창으로 표시
-}
-
-
-
-void CZombieGameDlg::OnBnClickedButtonDrawer()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CSurabDlg* pSurab = new CSurabDlg;
-	for (int i = 0; i < m_listInven.GetCount(); i++) {
-		m_listInven.GetText(i, pSurab->m_strInven[i]);
-		m_listInven.DeleteString(i);
-	}
-	if (pSurab->DoModal() == IDOK) {
-		for (int i = 0; i < 10; i++) {
-			m_strInven[i] = pSurab->m_strInven[i];
-			m_listInven.AddString(m_strInven[i]);
-		}
-	}
 }
