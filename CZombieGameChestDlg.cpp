@@ -1,7 +1,7 @@
 ﻿// CZombieGameChestDlg.cpp: 구현 파일
 //
 
-#include "pch.h"
+#include "pch.h" // 테스트
 #include "ZombieGame.h"
 #include "afxdialogex.h"
 #include "CZombieGameChestDlg.h"
