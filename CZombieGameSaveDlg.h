@@ -31,6 +31,11 @@ public:
 	CComboBox m_cbCombo3;
 	CComboBox m_cbCombo4;
 	afx_msg void OnClickedButtonOpen();
-//	CListBox m_listSafeInside;
 	CListBox m_listSaveInside;
+	virtual BOOL OnInitDialog();
+
+	CString m_strInven[10];
+	afx_msg void OnClickedButtonItemMove1();
+	afx_msg void OnBnClickedCancel();
+	CListBox m_listChestInven;
 };

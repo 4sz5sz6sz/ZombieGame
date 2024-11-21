@@ -168,8 +168,20 @@ HCURSOR CZombieGameDlg::OnQueryDragIcon()
 
 void CZombieGameDlg::OnClickedButtonSafe()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	sdlg.DoModal(); // 모달모달모발모발자라나라모발모발
+	CZombieGameSaveDlg* pSave = new CZombieGameSaveDlg;
+	for (int i = 0; i < m_listInven.GetCount(); i++) {
+		m_listInven.GetText(i, pSave->m_strInven[i]);
+		m_listInven.DeleteString(i);
+	}
+	// sdlg.DoModal(); // 모달모달모발모발자라나라모발모발
+	if (pSave->DoModal() == IDCANCEL) {
+		for (int i = 0; i < 10; i++) {
+			m_strInven[i] = pSave->m_strInven[i];
+			if (m_strInven[i].GetLength() >= 1) {
+				m_listInven.AddString(m_strInven[i]);
+			}
+		}
+	}
 	if (!m_bUnitViewed)
 	{
 		m_dlgZGSave.Create(IDD_DIALOG_SAFE, this);
@@ -195,7 +207,7 @@ void CZombieGameDlg::OnClickedButtonSafe()
 
 void CZombieGameDlg::OnClickedButtonChest()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	/*
 	cdlg.DoModal();
 	if (!m_bChestButton)
 	{
@@ -210,6 +222,42 @@ void CZombieGameDlg::OnClickedButtonChest()
 
 		m_dlgZGChest.ShowWindow(SW_SHOW);
 		m_bChestButton = TRUE;
+	}
+	else
+	{
+		m_dlgZGChest.ShowWindow(SW_HIDE);
+		m_dlgZGChest.DestroyWindow();
+		m_bChestButton = FALSE;
+	}
+	*/
+	CZombieGameChestDlg* pChest = new CZombieGameChestDlg;
+	if (!m_bChestButton)
+	{
+		for (int i = 0; i < m_listInven.GetCount(); i++) {
+			m_listInven.GetText(i, pChest->m_strInven[i]);
+			m_listInven.DeleteString(i);
+		}
+		if (pChest->DoModal() == IDCANCEL) {
+
+			for (int i = 0; i < 10; i++) {
+				m_strInven[i] = pChest->m_strInven[i];
+				if (m_strInven[i].GetLength() >= 1) {
+					m_listInven.AddString(m_strInven[i]);
+				}
+			}
+			m_dlgZGChest.Create(IDD_DIALOG_CHEST, this);
+
+			CRect rectMain, rectUnitTable;
+			GetWindowRect(&rectMain);
+
+			//m_dlgZGChest.GetWindowRect(&rectUnitTable);
+			m_dlgZGChest.MoveWindow(rectMain.right, rectMain.top, rectUnitTable.Width(),
+				rectUnitTable.Height());
+
+			m_dlgZGChest.ShowWindow(SW_SHOW);
+			m_bChestButton = TRUE;
+		}
+
 	}
 	else
 	{
