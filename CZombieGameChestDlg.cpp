@@ -7,6 +7,7 @@
 #include "CZombieGameChestDlg.h"
 int flag = 0;
 int clockpicture = 0;
+bool ifokc = true;
 // CZombieGameChestDlg 대화 상자
 
 IMPLEMENT_DYNAMIC(CZombieGameChestDlg, CDialogEx)
@@ -96,6 +97,7 @@ void CZombieGameChestDlg::OnClickedButtonCheck()
 			flag++;
 			MessageBox(_T("금고 문이 열렸다!"), _T("덜컥!"), MB_ICONINFORMATION);
 			m_listChestInside.AddString(_T("주황 물약"));
+			ifokc = false;
 		}
 		else {
 			MessageBox(_T("이미 금고 문은 열려있어..."), _T("저런!"), MB_ICONWARNING);
@@ -147,16 +149,23 @@ void CZombieGameChestDlg::OnClickedButtonItmeMove2()
 		m_listChestInside.GetText(leftIndex, str);
 		m_listChestInside.DeleteString(leftIndex);
 		m_listSaveInven.AddString(str);
+		if (str == "주황 물약")
+			ifokc = true;
 	}
 }
 
 
 void CZombieGameChestDlg::OnBnClickedCancel()
 {
-	for (int i = 0; i < m_listSaveInven.GetCount(); i++) {
-		m_listSaveInven.GetText(i, m_strInven[i]);
+	if (!ifokc) {
+		MessageBox(_T("나무 상자 안에 무언가 있는거 같아!"), _T("잠깐!"), MB_ICONWARNING);
 	}
-	CDialogEx::OnCancel();
+	else {
+		for (int i = 0; i < m_listSaveInven.GetCount(); i++) {
+			m_listSaveInven.GetText(i, m_strInven[i]);
+		}
+		CDialogEx::OnCancel();
+	}
 }
 
 

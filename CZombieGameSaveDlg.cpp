@@ -8,6 +8,7 @@
 #include "ZombieGameDlg.h"
 
 int check = 0;
+bool ifok = true;
 
 // CZombieGameSaveDlg 대화 상자
 
@@ -73,6 +74,7 @@ void CZombieGameSaveDlg::OnClickedButtonOpen() // 다이얼 값이 맞는지 판
             check++;
             MessageBox(_T("자물쇠가 풀렸다!"), _T("덜컥!"), MB_ICONINFORMATION);
             m_listSaveInside.AddString(_T("파란 물약"));
+            ifok = false;
         }
         else {
             MessageBox(_T("이미 상자는 열려있어..."), _T("저런!"), MB_ICONWARNING);
@@ -92,15 +94,22 @@ void CZombieGameSaveDlg::OnClickedButtonItemMove1()
         m_listSaveInside.GetText(leftIndex, str);
         m_listSaveInside.DeleteString(leftIndex);
         m_listChestInven.AddString(str);
+        if (str == "파란 물약")
+            ifok = true;
     }
 }
 
 void CZombieGameSaveDlg::OnBnClickedCancel()
 {
-    for (int i = 0; i < m_listChestInven.GetCount(); i++) {
-        m_listChestInven.GetText(i, m_strInven[i]);
+    if (!ifok) {
+        MessageBox(_T("나무 상자 안에 무언가 있는거 같아!"), _T("잠깐!"), MB_ICONWARNING);
     }
-    CDialogEx::OnCancel();
+    else {
+        for (int i = 0; i < m_listChestInven.GetCount(); i++) {
+            m_listChestInven.GetText(i, m_strInven[i]);
+        }
+        CDialogEx::OnCancel();
+    }
 }
 
 
