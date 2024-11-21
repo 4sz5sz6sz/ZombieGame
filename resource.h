@@ -61,14 +61,19 @@
 #define IDC_LIST_OUTPUT                 1036
 #define IDC_PIC1                        1037
 #define IDC_BUTTON3                     1040
+#define IDC_BUTTON_MACHINE_MOVE         1040
 #define IDC_BUTTON4                     1041
 #define IDC_BUTTON5                     1042
+#define IDC_BUTTON_MAKE                 1042
 #define IDC_LIST_POSSESS                1043
+#define IDC_LIST_MACHINE_INVEN          1043
 #define IDC_LIST_MYPOKET                1044
+#define IDC_LIST_VACCINE_MACHINE        1044
 #define IDC_PIC_End                     1045
 #define IDC_LIST_SURABINVEN             1046
 #define IDC_BUTTON_SURAB_MOVE           1047
 #define IDC_LIST_SAVE_INVEN             1048
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

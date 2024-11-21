@@ -21,4 +21,15 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
+public:
+	void PrintPicture();
+	void PrintPicture_Good();
+	CStatic m_picture_control_End;
+	CListBox m_listMachineInven;
+	CListBox m_listVaccineMachine;
+	void EndCheck();
+	afx_msg void OnBnClickedCancel();
+	CString m_strMachineInven[10];
+	virtual BOOL OnInitDialog();
+	afx_msg void OnBnClickedButtonMachineMove();
 };

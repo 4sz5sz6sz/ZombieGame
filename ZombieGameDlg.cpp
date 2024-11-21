@@ -11,6 +11,7 @@
 #include "CManufacture.h"
 #include "ArrowKeyGameDlg.h"
 #include "CSurabDlg.h"
+#include "CMachineDlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -257,7 +258,20 @@ void CZombieGameDlg::OnBnClickedButtonVaccineManfacturingMachine()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	//CSequenceDlg sequenceDlg;
 	//sequenceDlg.DoModal();
-	CManufacture* pManufacture = new CManufacture;
+	CMachineDlg* pMachine = new CMachineDlg;
+	for (int i = 0; i < m_listInven.GetCount(); i++) {
+		m_listInven.GetText(i, pMachine->m_strMachineInven[i]);
+	}
+	m_listInven.ResetContent();
+	if (pMachine->DoModal() == IDCANCEL) {
+		for (int i = 0; i < 10; i++) {
+			m_strInven[i] = pMachine->m_strMachineInven[i];
+			if (m_strInven[i].GetLength() >= 1) {
+				m_listInven.AddString(m_strInven[i]);
+			}
+		}
+	}
+
 
 
 
