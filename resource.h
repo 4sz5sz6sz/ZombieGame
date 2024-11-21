@@ -67,8 +67,8 @@
 #define IDC_LIST_MYPOKET                1044
 #define IDC_PIC_End                     1045
 #define IDC_LIST_SURABINVEN             1046
-#define IDC_LIST_SAVE_INVEN             1047
-
+#define IDC_BUTTON_SURAB_MOVE           1047
+#define IDC_LIST_SAVE_INVEN             1048
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
