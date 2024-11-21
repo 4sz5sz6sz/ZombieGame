@@ -25,4 +25,5 @@ public:
 	CListBox m_listSurabInven;
 	CListBox m_listSurab;
 	CString m_strSurabInven[10];
+	virtual BOOL OnInitDialog();
 };
