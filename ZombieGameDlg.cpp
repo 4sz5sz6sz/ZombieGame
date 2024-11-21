@@ -252,7 +252,9 @@ void CZombieGameDlg::OnBnClickedButtonDrawer()
 	if (pSurab->DoModal() == IDOK) {
 		for (int i = 0; i < 10; i++) {
 			m_strInven[i] = pSurab->m_strSurabInven[i];
-			m_listInven.AddString(m_strInven[i]);
+			if (m_strInven[i].GetLength() >= 1) {
+				m_listInven.AddString(m_strInven[i]);
+			}
 		}
 	}
 }
