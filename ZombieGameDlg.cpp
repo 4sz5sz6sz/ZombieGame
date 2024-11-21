@@ -169,17 +169,22 @@ HCURSOR CZombieGameDlg::OnQueryDragIcon()
 void CZombieGameDlg::OnClickedButtonSafe()
 {
 	CZombieGameSaveDlg* pSave = new CZombieGameSaveDlg;
+	int checkb = 0;
 	for (int i = 0; i < m_listInven.GetCount(); i++) {
 		m_listInven.GetText(i, pSave->m_strInven[i]);
 		m_listInven.DeleteString(i);
 	}
-	// sdlg.DoModal(); // 모달모달모발모발자라나라모발모발
 	if (pSave->DoModal() == IDCANCEL) {
 		for (int i = 0; i < 10; i++) {
 			m_strInven[i] = pSave->m_strInven[i];
+			if (m_strInven[i] == "파란 물약")
+				checkb++;
 			if (m_strInven[i].GetLength() >= 1) {
 				m_listInven.AddString(m_strInven[i]);
 			}
+		}
+		if (checkb >= 1) {
+			GetDlgItem(IDC_BUTTON_SAFE)->EnableWindow(false);
 		}
 	}
 	if (!m_bUnitViewed)
@@ -189,7 +194,6 @@ void CZombieGameDlg::OnClickedButtonSafe()
 		CRect rectMain, rectUnitTable;
 		GetWindowRect(&rectMain);
 
-		//m_dlgZGSave.GetWindowRect(&rectUnitTable); 이거 제거하면 왜 되는거임?
 		m_dlgZGSave.MoveWindow(rectMain.right, rectMain.top, rectUnitTable.Width(),
 			rectUnitTable.Height());
 
@@ -207,57 +211,37 @@ void CZombieGameDlg::OnClickedButtonSafe()
 
 void CZombieGameDlg::OnClickedButtonChest()
 {
-	/*
-	cdlg.DoModal();
-	if (!m_bChestButton)
-	{
-		m_dlgZGChest.Create(IDD_DIALOG_CHEST, this);
-
-		CRect rectMain, rectUnitTable;
-		GetWindowRect(&rectMain);
-
-		//m_dlgZGChest.GetWindowRect(&rectUnitTable);
-		m_dlgZGChest.MoveWindow(rectMain.right, rectMain.top, rectUnitTable.Width(),
-			rectUnitTable.Height());
-
-		m_dlgZGChest.ShowWindow(SW_SHOW);
-		m_bChestButton = TRUE;
-	}
-	else
-	{
-		m_dlgZGChest.ShowWindow(SW_HIDE);
-		m_dlgZGChest.DestroyWindow();
-		m_bChestButton = FALSE;
-	}
-	*/
 	CZombieGameChestDlg* pChest = new CZombieGameChestDlg;
+	int checko = 0;
+	for (int i = 0; i < m_listInven.GetCount(); i++) {
+		m_listInven.GetText(i, pChest->m_strInven[i]);
+		m_listInven.DeleteString(i);
+	}
+	if (pChest->DoModal() == IDCANCEL) {
+		for (int i = 0; i < 10; i++) {
+			m_strInven[i] = pChest->m_strInven[i];
+			if (m_strInven[i] == "주황 물약")
+				checko++;
+			if (m_strInven[i].GetLength() >= 1) {
+				m_listInven.AddString(m_strInven[i]);
+			}
+		}
+		if (checko >= 1) {
+			GetDlgItem(IDC_BUTTON_CHEST)->EnableWindow(false);
+		}
+	}
 	if (!m_bChestButton)
 	{
-		for (int i = 0; i < m_listInven.GetCount(); i++) {
-			m_listInven.GetText(i, pChest->m_strInven[i]);
-			m_listInven.DeleteString(i);
-		}
-		if (pChest->DoModal() == IDCANCEL) {
-
-			for (int i = 0; i < 10; i++) {
-				m_strInven[i] = pChest->m_strInven[i];
-				if (m_strInven[i].GetLength() >= 1) {
-					m_listInven.AddString(m_strInven[i]);
-				}
-			}
 			m_dlgZGChest.Create(IDD_DIALOG_CHEST, this);
 
 			CRect rectMain, rectUnitTable;
 			GetWindowRect(&rectMain);
 
-			//m_dlgZGChest.GetWindowRect(&rectUnitTable);
 			m_dlgZGChest.MoveWindow(rectMain.right, rectMain.top, rectUnitTable.Width(),
 				rectUnitTable.Height());
 
 			m_dlgZGChest.ShowWindow(SW_SHOW);
 			m_bChestButton = TRUE;
-		}
-
 	}
 	else
 	{
