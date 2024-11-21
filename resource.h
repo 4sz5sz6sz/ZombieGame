@@ -15,6 +15,8 @@
 #define IDD_DIALOG_MACHINE              139
 #define IDD_DIALOG3                     141
 #define IDD_DIALOG_SURAB                143
+#define IDD_DIALOG4                     147
+#define IDD_DOOR_MENU_DIALOG            147
 #define IDC_BUTTON_DOOR                 1000
 #define IDC_BUTTON_DRAWER               1001
 #define IDC_BUTTON_SAFE                 1002
@@ -68,7 +70,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           101
