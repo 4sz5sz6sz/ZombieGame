@@ -24,12 +24,15 @@
 #define IDC_BUTTON_VACCINE_MANFACTURING_MACHINE 1005
 #define IDD_ARROW_KEY_DIALOG            1006
 #define IDC_LIST1                       1007
+#define IDC_LIST_INVEN                  1007
 #define IDC_COMBO1                      1008
 #define IDC_LIST3                       1008
+#define IDC_LIST_SURAB                  1008
 #define IDC_COMBO2                      1009
 #define IDC_COMBO3                      1010
 #define IDC_COMBO4                      1011
 #define IDC_LIST2                       1012
+#define IDC_LIST_CHEST_INVEN            1012
 #define IDC_BUTTON2                     1013
 #define IDC_BUTTON_OPEN                 1013
 #define IDC_BUTTON_ITME_MOVE2           1013
@@ -60,10 +63,14 @@
 #define IDC_LIST_OUTPUT                 1036
 #define IDC_PIC1                        1037
 #define IDC_BUTTON3                     1040
+#define IDC_BUTTON_MACHINE_MOVE         1040
 #define IDC_BUTTON4                     1041
 #define IDC_BUTTON5                     1042
+#define IDC_BUTTON_MAKE                 1042
 #define IDC_LIST_POSSESS                1043
+#define IDC_LIST_MACHINE_INVEN          1043
 #define IDC_LIST_MYPOKET                1044
+#define IDC_LIST_VACCINE_MACHINE        1044
 #define IDC_PIC_End                     1045
 #define IDC_BUTTON_EXIT                 1046
 #define IDC_STAGE_BUTTON1               1047
@@ -72,6 +79,9 @@
 #define IDC_STAGE_BUTTON4               1050
 #define IDC_STAGE_BUTTON5               1051
 #define IDC_STAGE_BUTTON6               1052
+#define IDC_LIST_SURABINVEN             1046
+#define IDC_BUTTON_SURAB_MOVE           1047
+#define IDC_LIST_SAVE_INVEN             1048
 
 // Next default values for new objects
 // 

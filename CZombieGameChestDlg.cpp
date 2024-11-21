@@ -7,6 +7,7 @@
 #include "CZombieGameChestDlg.h"
 int flag = 0;
 int clockpicture = 0;
+bool ifokc = true;
 // CZombieGameChestDlg 대화 상자
 
 IMPLEMENT_DYNAMIC(CZombieGameChestDlg, CDialogEx)
@@ -14,7 +15,7 @@ IMPLEMENT_DYNAMIC(CZombieGameChestDlg, CDialogEx)
 CZombieGameChestDlg::CZombieGameChestDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_CHEST, pParent)
 {
-	
+
 }
 
 CZombieGameChestDlg::~CZombieGameChestDlg()
@@ -28,6 +29,7 @@ void CZombieGameChestDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PIC_CLOCK, m_picClock);
 
 	DDX_Control(pDX, IDC_LIST_CHEST_INSIDE, m_listChestInside);
+	DDX_Control(pDX, IDC_LIST_SAVE_INVEN, m_listSaveInven);
 }
 
 
@@ -39,6 +41,8 @@ BEGIN_MESSAGE_MAP(CZombieGameChestDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_RIGHT, &CZombieGameChestDlg::OnClickedButtonRight)
 	ON_BN_CLICKED(IDC_BUTTON_LEFT, &CZombieGameChestDlg::OnClickedButtonLeft)
 	ON_BN_CLICKED(IDC_BUTTON_CLEAR, &CZombieGameChestDlg::OnClickedButtonClear)
+	ON_BN_CLICKED(IDC_BUTTON_ITME_MOVE2, &CZombieGameChestDlg::OnClickedButtonItmeMove2)
+	ON_BN_CLICKED(IDCANCEL, &CZombieGameChestDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 
@@ -68,31 +72,32 @@ void CZombieGameChestDlg::OnClickedButtonCheck()
 	CString str;
 	int nCount = m_listAnswer.GetCount();
 	int ch = 0;
-		for (int i = 0; i < nCount; i++)
-		{
-			m_listAnswer.GetText(i, str);
-			if (i >= 0 && i <= 4) {
-				if (str == "→")
-					ch++;
-			}
-			if (i >= 5 && i <= 8) {
-				if (str == "←")
-					ch++;
-			}
-			if (i >= 9 && i <= 11) {
-				if (str == "↓")
-					ch++;
-			}
-			if (i >= 12 && i <= 16) {
-				if (str == "↑")
-					ch++;
-			}
+	for (int i = 0; i < nCount; i++)
+	{
+		m_listAnswer.GetText(i, str);
+		if (i >= 0 && i <= 4) {
+			if (str == "→")
+				ch++;
 		}
+		if (i >= 5 && i <= 8) {
+			if (str == "←")
+				ch++;
+		}
+		if (i >= 9 && i <= 11) {
+			if (str == "↓")
+				ch++;
+		}
+		if (i >= 12 && i <= 16) {
+			if (str == "↑")
+				ch++;
+		}
+	}
 	if (ch == nCount && nCount != 0) {
 		if (flag == 0) {
 			flag++;
 			MessageBox(_T("금고 문이 열렸다!"), _T("덜컥!"), MB_ICONINFORMATION);
-			m_listChestInside.AddString(_T("물약"));
+			m_listChestInside.AddString(_T("주황 물약"));
+			ifokc = false;
 		}
 		else {
 			MessageBox(_T("이미 금고 문은 열려있어..."), _T("저런!"), MB_ICONWARNING);
@@ -133,5 +138,47 @@ void CZombieGameChestDlg::OnClickedButtonClear()
 	for (int i = 0; i < nCount; i++) {
 		m_listAnswer.DeleteString(0);
 	}
+}
 
+
+void CZombieGameChestDlg::OnClickedButtonItmeMove2()
+{
+	CString str;
+	int leftIndex = m_listChestInside.GetCurSel();
+	if (leftIndex != LB_ERR) {
+		m_listChestInside.GetText(leftIndex, str);
+		m_listChestInside.DeleteString(leftIndex);
+		m_listSaveInven.AddString(str);
+		if (str == "주황 물약")
+			ifokc = true;
+	}
+}
+
+
+void CZombieGameChestDlg::OnBnClickedCancel()
+{
+	if (!ifokc) {
+		MessageBox(_T("나무 상자 안에 무언가 있는거 같아!"), _T("잠깐!"), MB_ICONWARNING);
+	}
+	else {
+		for (int i = 0; i < m_listSaveInven.GetCount(); i++) {
+			m_listSaveInven.GetText(i, m_strInven[i]);
+		}
+		CDialogEx::OnCancel();
+	}
+}
+
+
+BOOL CZombieGameChestDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	for (int i = 0; i < 10; i++) {
+		if (m_strInven[i].GetLength() >= 1) {
+			m_listSaveInven.InsertString(i, m_strInven[i]);
+		}
+	}
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }

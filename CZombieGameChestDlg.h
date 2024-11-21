@@ -23,18 +23,19 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnClickedButtonClockReverse();
-//	CListBox m_listAnswer;
 	afx_msg void OnClickedButtonCheck();
 	afx_msg void OnClickedButtonUp();
 	afx_msg void OnClickedButtonDown();
 	afx_msg void OnClickedButtonRight();
 	afx_msg void OnClickedButtonLeft();
-//	CString m_listAnswer;
-//	CString m_strAnswer;
 	CListBox m_listAnswer;
 	afx_msg void OnClickedButtonClear();
 	CStatic m_picClock;
-//	CListBox m_listSafeInside;
-//	CListBox m_listSafeInsides;
 	CListBox m_listChestInside;
+
+	virtual BOOL OnInitDialog();
+	CString m_strInven[10];
+	CListBox m_listSaveInven;
+	afx_msg void OnClickedButtonItmeMove2();
+	afx_msg void OnBnClickedCancel();
 };

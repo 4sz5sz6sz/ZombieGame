@@ -10,6 +10,8 @@
 #include "CSequenceDlg.h"
 #include "CManufacture.h"
 #include "ArrowKeyGameDlg.h"
+#include "CSurabDlg.h"
+#include "CMachineDlg.h"
 #include "CDoorMenuDialog.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,8 +66,9 @@ CZombieGameDlg::CZombieGameDlg(CWnd* pParent /*=nullptr*/)
 void CZombieGameDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST_INVEN, m_listInven);
 }
-
+//
 BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
@@ -74,6 +77,7 @@ BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_CHEST, &CZombieGameDlg::OnClickedButtonChest)
 	ON_BN_CLICKED(IDC_BUTTON_VACCINE_MANFACTURING_MACHINE, &CZombieGameDlg::OnBnClickedButtonVaccineManfacturingMachine)
 	ON_BN_CLICKED(IDC_BUTTON_DOOR, &CZombieGameDlg::OnBnClickedButtonDoor)
+	ON_BN_CLICKED(IDC_BUTTON_DRAWER, &CZombieGameDlg::OnBnClickedButtonDrawer)
 END_MESSAGE_MAP()
 
 
@@ -166,8 +170,25 @@ HCURSOR CZombieGameDlg::OnQueryDragIcon()
 
 void CZombieGameDlg::OnClickedButtonSafe()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	sdlg.DoModal(); // 모달모달모발모발자라나라모발모발
+	CZombieGameSaveDlg* pSave = new CZombieGameSaveDlg;
+	int checkb = 0;
+	for (int i = 0; i < m_listInven.GetCount(); i++) {
+		m_listInven.GetText(i, pSave->m_strInven[i]);
+	}
+	m_listInven.ResetContent();
+	if (pSave->DoModal() == IDCANCEL) {
+		for (int i = 0; i < 10; i++) {
+			m_strInven[i] = pSave->m_strInven[i];
+			if (m_strInven[i] == "파란 물약")
+				checkb++;
+			if (m_strInven[i].GetLength() >= 1) {
+				m_listInven.AddString(m_strInven[i]);
+			}
+		}
+		if (checkb >= 1) {
+			GetDlgItem(IDC_BUTTON_SAFE)->EnableWindow(false);
+		}
+	}
 	if (!m_bUnitViewed)
 	{
 		m_dlgZGSave.Create(IDD_DIALOG_SAFE, this);
@@ -175,7 +196,6 @@ void CZombieGameDlg::OnClickedButtonSafe()
 		CRect rectMain, rectUnitTable;
 		GetWindowRect(&rectMain);
 
-		//m_dlgZGSave.GetWindowRect(&rectUnitTable); 이거 제거하면 왜 되는거임?
 		m_dlgZGSave.MoveWindow(rectMain.right, rectMain.top, rectUnitTable.Width(),
 			rectUnitTable.Height());
 
@@ -193,21 +213,37 @@ void CZombieGameDlg::OnClickedButtonSafe()
 
 void CZombieGameDlg::OnClickedButtonChest()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	cdlg.DoModal();
+	CZombieGameChestDlg* pChest = new CZombieGameChestDlg;
+	int checko = 0;
+	for (int i = 0; i < m_listInven.GetCount(); i++) {
+		m_listInven.GetText(i, pChest->m_strInven[i]);
+	}
+	m_listInven.ResetContent();
+	if (pChest->DoModal() == IDCANCEL) {
+		for (int i = 0; i < 10; i++) {
+			m_strInven[i] = pChest->m_strInven[i];
+			if (m_strInven[i] == "주황 물약")
+				checko++;
+			if (m_strInven[i].GetLength() >= 1) {
+				m_listInven.AddString(m_strInven[i]);
+			}
+		}
+		if (checko >= 1) {
+			GetDlgItem(IDC_BUTTON_CHEST)->EnableWindow(false);
+		}
+	}
 	if (!m_bChestButton)
 	{
-		m_dlgZGChest.Create(IDD_DIALOG_CHEST, this);
+			m_dlgZGChest.Create(IDD_DIALOG_CHEST, this);
 
-		CRect rectMain, rectUnitTable;
-		GetWindowRect(&rectMain);
+			CRect rectMain, rectUnitTable;
+			GetWindowRect(&rectMain);
 
-		//m_dlgZGChest.GetWindowRect(&rectUnitTable);
-		m_dlgZGChest.MoveWindow(rectMain.right, rectMain.top, rectUnitTable.Width(),
-			rectUnitTable.Height());
+			m_dlgZGChest.MoveWindow(rectMain.right, rectMain.top, rectUnitTable.Width(),
+				rectUnitTable.Height());
 
-		m_dlgZGChest.ShowWindow(SW_SHOW);
-		m_bChestButton = TRUE;
+			m_dlgZGChest.ShowWindow(SW_SHOW);
+			m_bChestButton = TRUE;
 	}
 	else
 	{
@@ -223,8 +259,21 @@ void CZombieGameDlg::OnBnClickedButtonVaccineManfacturingMachine()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	//CSequenceDlg sequenceDlg;
 	//sequenceDlg.DoModal();
-	CManufacture Manufacture;
-	Manufacture.DoModal();
+	CMachineDlg* pMachine = new CMachineDlg;
+	for (int i = 0; i < m_listInven.GetCount(); i++) {
+		m_listInven.GetText(i, pMachine->m_strMachineInven[i]);
+	}
+	m_listInven.ResetContent();
+	if (pMachine->DoModal() == IDCANCEL) {
+		for (int i = 0; i < 10; i++) {
+			m_strInven[i] = pMachine->m_strMachineInven[i];
+			if (m_strInven[i].GetLength() >= 1) {
+				m_listInven.AddString(m_strInven[i]);
+			}
+		}
+	}
+
+
 
 
 }
@@ -235,4 +284,31 @@ void CZombieGameDlg::OnBnClickedButtonDoor()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	CDoorMenuDialog doorMenuDialog;
 	doorMenuDialog.DoModal(); // 모달 창으로 표시
+}
+
+
+
+void CZombieGameDlg::OnBnClickedButtonDrawer()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CSurabDlg* pSurab = new CSurabDlg;
+	int checkr = 0;
+	for (int i = 0; i < m_listInven.GetCount(); i++) {
+		m_listInven.GetText(i, pSurab->m_strSurabInven[i]);
+		
+	}
+	m_listInven.ResetContent();
+	if (pSurab->DoModal() == IDOK) {
+		for (int i = 0; i < 10; i++) {
+			m_strInven[i] = pSurab->m_strSurabInven[i];
+			if (m_strInven[i] == "빨간 물약")
+				checkr++;
+			if (m_strInven[i].GetLength() >= 1) {
+				m_listInven.AddString(m_strInven[i]);
+			}
+		}
+		if (checkr >= 1) {
+			GetDlgItem(IDC_BUTTON_DRAWER)->EnableWindow(false);
+		}
+	}
 }

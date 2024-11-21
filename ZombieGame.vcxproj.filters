@@ -72,6 +72,9 @@
     <ClInclude Include="CSurabDlg.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CMachineDlg.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="CDoorMenuDialog.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -117,6 +120,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CSurabDlg.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CMachineDlg.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CDoorMenuDialog.cpp">
