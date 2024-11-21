@@ -66,7 +66,7 @@ void CZombieGameDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_INVEN, m_listInven);
 }
-
+//
 BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
