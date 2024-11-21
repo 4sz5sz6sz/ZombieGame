@@ -16,7 +16,7 @@
 
 IMPLEMENT_DYNAMIC(CArrowKeyGameDialog, CDialogEx)
 
-CArrowKeyGameDialog::CArrowKeyGameDialog(CWnd* pParent /*=nullptr*/)
+CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ARROW_KEY_DIALOG, pParent),
 	player(8, 8),
 	remainingCooldownTime(0),
@@ -35,6 +35,7 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(CWnd* pParent /*=nullptr*/)
 	moveSpeed = 0.4;	//0.4 추천
 	safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
 	safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
+	//InitializeStage(stageNumber);	//////////정말 중요@@@@@@@@@@@@@ 핵심
 	UINT_PTR m_nTimerID;
 
 }
@@ -523,5 +524,33 @@ void CArrowKeyGameDialog::UpdatePlayerHP()
 		isGameOver = true;
 		AfxMessageBox(_T("게임 오버! 체력이 0이 되었습니다."));
 		//추가적인 게임 오버 처리
+	}
+}
+
+
+// 각 스테이지 별 환경 세팅 (ex. 좀비, 플레이어, 이동속도)
+void CArrowKeyGameDialog::InitializeStage(int stageNumber)
+{
+	// TODO: 여기에 구현 코드 추가.
+	switch (stageNumber)
+	{
+	case 1:
+		// Stage 1 설정
+		break;
+	case 2:
+		// Stage 2 설정
+		break;
+	case 3:
+		// Stage 3 설정
+		break;
+	case 4:
+		// Stage 4 설정
+		break;
+	case 5:
+		// Stage 5 설정
+		break;
+	case 6:
+		// Stage 6 설정
+		break;
 	}
 }

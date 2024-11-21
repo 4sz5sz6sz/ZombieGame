@@ -184,6 +184,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ArrowKeyGameDlg.h" />
+    <ClInclude Include="CDoorMenuDialog.h" />
     <ClInclude Include="CEntity.h" />
     <ClInclude Include="CManufacture.h" />
     <ClInclude Include="CModalDlg.h" />
@@ -205,6 +206,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArrowKeyGameDlg.cpp" />
+    <ClCompile Include="CDoorMenuDialog.cpp" />
     <ClCompile Include="CEntity.cpp" />
     <ClCompile Include="CManufacture.cpp" />
     <ClCompile Include="CModalDlg.cpp" />

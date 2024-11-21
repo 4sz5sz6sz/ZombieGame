@@ -20,7 +20,7 @@ class CArrowKeyGameDialog : public CDialogEx
 	DECLARE_DYNAMIC(CArrowKeyGameDialog)
 
 public:
-	CArrowKeyGameDialog(CWnd* pParent = nullptr);   // 표준 생성자입니다.
+	CArrowKeyGameDialog(int stageNumber, CWnd* pParent = nullptr);   // 표준 생성자입니다.
 	virtual ~CArrowKeyGameDialog();
 	//virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
@@ -87,4 +87,6 @@ public:
 	void CheckPlayerMaterialCollision();  // OnTimer(), 플레이어-재료 충돌 확인, 내부에서 material.CheckCollisionWithPlayer(x,y)가 n번 호출됨.
 	void UpdatePlayerHP();// Player-Zombie 충돌에 따른 체력 업데이트
 	bool isGameOver; // 게임오버 여부 저장. UpdatePlayerHP() 무한루프 방지.
+	// 각 스테이지 별 환경 세팅 (ex. 좀비, 플레이어, 이동속도)
+	void InitializeStage(int stageNumber);
 };
