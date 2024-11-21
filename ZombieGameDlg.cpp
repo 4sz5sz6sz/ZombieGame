@@ -172,8 +172,8 @@ void CZombieGameDlg::OnClickedButtonSafe()
 	int checkb = 0;
 	for (int i = 0; i < m_listInven.GetCount(); i++) {
 		m_listInven.GetText(i, pSave->m_strInven[i]);
-		m_listInven.DeleteString(i);
 	}
+	m_listInven.ResetContent();
 	if (pSave->DoModal() == IDCANCEL) {
 		for (int i = 0; i < 10; i++) {
 			m_strInven[i] = pSave->m_strInven[i];
@@ -215,8 +215,8 @@ void CZombieGameDlg::OnClickedButtonChest()
 	int checko = 0;
 	for (int i = 0; i < m_listInven.GetCount(); i++) {
 		m_listInven.GetText(i, pChest->m_strInven[i]);
-		m_listInven.DeleteString(i);
 	}
+	m_listInven.ResetContent();
 	if (pChest->DoModal() == IDCANCEL) {
 		for (int i = 0; i < 10; i++) {
 			m_strInven[i] = pChest->m_strInven[i];
@@ -257,8 +257,8 @@ void CZombieGameDlg::OnBnClickedButtonVaccineManfacturingMachine()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	//CSequenceDlg sequenceDlg;
 	//sequenceDlg.DoModal();
-	CManufacture Manufacture;
-	Manufacture.DoModal();
+	CManufacture* pManufacture = new CManufacture;
+
 
 
 }
