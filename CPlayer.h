@@ -16,7 +16,7 @@ public:
     std::chrono::steady_clock::time_point lastSafeZoneTime; // 마지막 안전지대 설치 시간
 
 
-    CPlayer(double startX, double startY) : CEntity(startX, startY), safeZoneSize(50), lastSafeZoneTime(std::chrono::steady_clock::now()), HP(100.0) {}
+    CPlayer(double startX, double startY) : CEntity(startX, startY), safeZoneSize(50), lastSafeZoneTime(std::chrono::steady_clock::now() - std::chrono::seconds(3)), HP(100.0) {}
 
     // 안전지대 설치 함수
     void TryToPlaceSafeZone(CArrowKeyGameDialog* pGameDialog, std::vector<CZombie>& zombies, std::vector<CSafeZone>& safeZones);

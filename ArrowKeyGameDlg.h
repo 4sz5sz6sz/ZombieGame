@@ -50,7 +50,7 @@ public:
 	bool moveRight;
 
 	CPoint m_ptLocation;
-	CRect playerRect; // 네모의 위치
+	//CRect playerRect; // 네모의 위치
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnBnClickedOk();

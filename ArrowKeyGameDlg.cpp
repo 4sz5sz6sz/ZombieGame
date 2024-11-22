@@ -35,7 +35,7 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullp
 	moveSpeed = 0.4;	//0.4 추천, 60fps이면 0.2
 	
 	InitializeStage(stageNumber);	//각 스테이지 별 환경 설정.
-	UINT_PTR m_nTimerID;
+	//UINT_PTR m_nTimerID;
 
 }
 
@@ -107,10 +107,30 @@ void CArrowKeyGameDialog::OnPaint()
 		);
 	}
 
-	//체력 표시
+	// 체력바 그리기
+	int healthBarWidth = 200; // 체력바의 총 길이
+	int healthBarHeight = 20; // 체력바의 높이
+	int healthBarX = 10;      // 체력바의 X 좌표 (화면의 왼쪽)
+	int healthBarY = 40;      // 체력바의 Y 좌표 (화면의 위쪽)
+
+	// 체력에 비례한 체력바 길이 계산
+	int currentHealthWidth = (int)(player.HP / 100.0 * healthBarWidth);
+
+	// 체력바 배경 (회색)
+	CBrush bgBrush(RGB(200, 200, 200)); // 배경 색
+	dc.FillRect(CRect(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY + healthBarHeight), &bgBrush);
+
+	// 체력바 (빨간색)
+	CBrush healthBrush(RGB(255, 0, 0)); // 체력 색
+	dc.FillRect(CRect(healthBarX, healthBarY, healthBarX + currentHealthWidth, healthBarY + healthBarHeight), &healthBrush);
+
+	// 체력 값 텍스트 추가
 	CString hpText;
 	hpText.Format(_T("HP: %.0f%%"), player.HP);
-	//CRect hpRect(500, 20, 600, 50); //1시 방향
+	dc.SetBkMode(TRANSPARENT);
+	dc.SetTextColor(RGB(0, 0, 0)); // 텍스트 색상: 검정색
+	dc.DrawText(hpText, CRect(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY + healthBarHeight), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
 	CRect hpRect(
 		player.x * SCALE_FACTOR + SCALE_FACTOR + 10, // 플레이어 오른쪽에 약간 띄워 표시
 		player.y * SCALE_FACTOR,
@@ -274,7 +294,7 @@ int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
 	MoveWindow(0, 0, 800, 600);	//원하는 창 크기
-	playerRect = CRect(100, 100, 120, 120); // 플레이어 초기위치와 크기 설정
+	//playerRect = CRect(100, 100, 120, 120); // 플레이어 초기위치와 크기 설정
 	//CRect safeZone(100, 100, 200, 200); // 안전지대의 위치와 크기 설정
 
 
@@ -295,7 +315,7 @@ int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CArrowKeyGameDialog::MovePlayer(double dx, double dy)
 {
 	// TODO: 여기에 구현 코드 추가.
-	playerRect.OffsetRect(dx, dy);	//네모위치이동
+	//playerRect.OffsetRect(dx, dy);	//네모위치이동
 	player.x += dx; // playerX 좌표 갱신
 	player.y += dy; // playerY 좌표 갱신
 	Invalidate();	//OnPaint() 호출
@@ -533,6 +553,10 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 	safeZones.clear();         // 기존 안전지대 초기화
 	zombies.clear();           // 기존 좀비 초기화
 	yellowMaterials.clear();   // 기존 노란재료 초기화
+
+	isCooldownActive = false;  // 쿨타임 비활성화
+	remainingCooldownTime = 0.0; // 쿨타임 초기화
+
 	switch (stageNumber)
 	{
 	case 1:
