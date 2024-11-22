@@ -72,8 +72,8 @@ void CArrowKeyGameDialog::OnPaint()
 	for (auto& material : yellowMaterials) {
 		if (!material.collected) {
 			dc.FillSolidRect(
-				material.x * SCALE_FACTOR,
-				material.y * SCALE_FACTOR,
+				(int)material.x * SCALE_FACTOR,
+				(int)material.y * SCALE_FACTOR,
 				SCALE_FACTOR,
 				SCALE_FACTOR,
 				RGB(255, 255, 0)); //노란색 네모 그리기
@@ -91,16 +91,16 @@ void CArrowKeyGameDialog::OnPaint()
 
 	//파란색 네모 그리기
 	dc.FillSolidRect(
-		player.x * SCALE_FACTOR, 
-		player.y * SCALE_FACTOR, 
+		static_cast<int>(player.x * SCALE_FACTOR),
+		static_cast<int>(player.y * SCALE_FACTOR),
 		SCALE_FACTOR, 
 		SCALE_FACTOR, 
 		RGB(0, 0, 255)
 	); //파란색 네모
 
 	for (auto& zombie : zombies) {
-		dc.FillSolidRect(zombie.x * SCALE_FACTOR, 
-			zombie.y * SCALE_FACTOR, 
+		dc.FillSolidRect(static_cast<int>(zombie.x * SCALE_FACTOR),
+			static_cast<int>(zombie.y * SCALE_FACTOR),
 			SCALE_FACTOR, 
 			SCALE_FACTOR, 
 			RGB(255, 0, 0)	//빨간색 네모
@@ -132,10 +132,10 @@ void CArrowKeyGameDialog::OnPaint()
 	dc.DrawText(hpText, CRect(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY + healthBarHeight), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	CRect hpRect(
-		player.x * SCALE_FACTOR + SCALE_FACTOR + 10, // 플레이어 오른쪽에 약간 띄워 표시
-		player.y * SCALE_FACTOR,
-		player.x * SCALE_FACTOR + SCALE_FACTOR + 80,
-		player.y * SCALE_FACTOR + 20
+		static_cast<int>(player.x * SCALE_FACTOR + SCALE_FACTOR + 10), // 플레이어 오른쪽에 약간 띄워 표시
+		static_cast<int>(player.y * SCALE_FACTOR),
+		static_cast<int>(player.x * SCALE_FACTOR + SCALE_FACTOR + 80),
+		static_cast<int>(player.y * SCALE_FACTOR + 20)
 	);
 	dc.SetBkMode(TRANSPARENT);	//투명 배경
 	//dc.SetTextColor(RGB(255, 0, 0)); //빨간색 텍스트
@@ -532,7 +532,7 @@ void CArrowKeyGameDialog::UpdatePlayerHP()
 		player.TakeDamage(); //충돌 시 체력 5 감소
 	}
 	else {
-		player.Heal(); //충돌하지 않을 때 체력 0.1 회복
+		player.Heal(); //충돌하지 않을 때 체력 0.5 회복
 	}
 
 	//게임 오버
@@ -540,6 +540,8 @@ void CArrowKeyGameDialog::UpdatePlayerHP()
 		isGameOver = true;
 		AfxMessageBox(_T("게임 오버! 체력이 0이 되었습니다."));
 		//추가적인 게임 오버 처리
+
+		EndDialog(IDCANCEL); //디버깅 할때는 주석처리 해도 됨. 게임 이어가기 가능.
 	}
 }
 
@@ -573,7 +575,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		// 안전지대
 		safeZones.push_back(CRect(50, 50, 150, 150));
 		safeZones.push_back(CRect(400, 400, 500, 500));
-		activeSafeZoneCount = safeZones.size();
+		activeSafeZoneCount = (int)safeZones.size();
 
 		// 좀비
 		zombies.push_back(CZombie(12, 10, 1));
