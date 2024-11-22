@@ -29,7 +29,7 @@ public:
     }
     
     void TakeDamage(double amount=5.0); // 데미지 입는 경우 호출
-    void Heal(double amount=0.1); // 회복하는 경우 호출
+    void Heal(double amount=0.5); // 회복하는 경우 호출
     bool IsAlive() const; // 살아있는지 검사. HP가 0 이상인지 여부.
 };
 
