@@ -89,4 +89,5 @@ public:
 	bool isGameOver; // 게임오버 여부 저장. UpdatePlayerHP() 무한루프 방지.
 	// 각 스테이지 별 환경 세팅 (ex. 좀비, 플레이어, 이동속도)
 	void InitializeStage(int stageNumber);
+
 };

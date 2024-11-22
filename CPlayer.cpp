@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CPlayer.h"
 #include "ArrowKeyGameDlg.h"
+#include "CMessageManager.h"
 
 
 void CPlayer::TryToPlaceSafeZone(CArrowKeyGameDialog* pGameDialog, std::vector<CZombie>& zombies, std::vector<CSafeZone>& safeZones) {
@@ -10,6 +11,7 @@ void CPlayer::TryToPlaceSafeZone(CArrowKeyGameDialog* pGameDialog, std::vector<C
     
     // 3초가 지나지 않았으면 설치 불가
     if (elapsed.count() < 3.0) {
+        CMessageManager::GetInstance().AddMessage(_T("안전지대 설치 쿨타임 중입니다..."));
         OutputDebugString(_T("안전지대 설치 쿨타임 중입니다...\n"));
         return;
     }
@@ -25,6 +27,7 @@ void CPlayer::TryToPlaceSafeZone(CArrowKeyGameDialog* pGameDialog, std::vector<C
     // 새로운 안전지대 안에 좀비가 있는지 확인
     for (const auto& zombie : zombies) {
         if (CheckCollision(zombie.x, zombie.y,newSafeZone)) {
+            CMessageManager::GetInstance().AddMessage(_T("안전지대 설치 실패: 충돌 발생"));
             OutputDebugString(_T("안전지대 설치가 취소되었습니다. 엔티티가 안전지대 내에 있습니다.\n"));
             return;
         }

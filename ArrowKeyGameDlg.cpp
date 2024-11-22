@@ -8,6 +8,7 @@
 #include "ArrowKeyGameDlg.h"
 #include "ZombieMovement.h"
 #include "CYellowMaterial.h"
+#include "CMessageManager.h"
 #include <algorithm>	//max 함수
 #include <chrono>	//시간 함수
 
@@ -107,24 +108,24 @@ void CArrowKeyGameDialog::OnPaint()
 		);
 	}
 
-	// 체력바 그리기
+	//체력바 그리기
 	int healthBarWidth = 200; // 체력바의 총 길이
 	int healthBarHeight = 20; // 체력바의 높이
 	int healthBarX = 10;      // 체력바의 X 좌표 (화면의 왼쪽)
 	int healthBarY = 40;      // 체력바의 Y 좌표 (화면의 위쪽)
 
-	// 체력에 비례한 체력바 길이 계산
+	//체력에 비례한 체력바 길이 계산
 	int currentHealthWidth = (int)(player.HP / 100.0 * healthBarWidth);
 
-	// 체력바 배경 (회색)
+	//체력바 배경 (회색)
 	CBrush bgBrush(RGB(200, 200, 200)); // 배경 색
 	dc.FillRect(CRect(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY + healthBarHeight), &bgBrush);
 
-	// 체력바 (빨간색)
+	//체력바 (빨간색)
 	CBrush healthBrush(RGB(255, 0, 0)); // 체력 색
 	dc.FillRect(CRect(healthBarX, healthBarY, healthBarX + currentHealthWidth, healthBarY + healthBarHeight), &healthBrush);
 
-	// 체력 값 텍스트 추가
+	//체력 값 텍스트 추가
 	CString hpText;
 	hpText.Format(_T("HP: %.0f%%"), player.HP);
 	dc.SetBkMode(TRANSPARENT);
@@ -158,6 +159,20 @@ void CArrowKeyGameDialog::OnPaint()
 			dc.SetBkMode(TRANSPARENT);
 			dc.DrawText(timeText, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		}
+	}
+
+	// 메시지 출력 위치
+	int startX = 10;
+	int startY = 480; // 화면 아래쪽
+	int lineHeight = 20;
+
+	auto messages = CMessageManager::GetInstance().GetMessages();
+	for (size_t i = 0; i < messages.size(); ++i) {
+		CString message = messages[i];
+		CRect messageRect(startX, startY + i * lineHeight, startX + 300, startY + (i + 1) * lineHeight);
+		dc.SetBkMode(TRANSPARENT);
+		dc.SetTextColor(RGB(0, 0, 0)); // 흰색 텍스트
+		dc.DrawText(message, &messageRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	}
 
 	//DrawHUD(dc);
@@ -422,6 +437,7 @@ void CArrowKeyGameDialog::CheckPlayerOnSafeZones()
 				//k초 이상 머물렀으면 안전지대 파괴
 				if (elapsed.count() >= K_SECONDS) {
 					OutputDebugString(_T("안전지대가 파괴되었습니다.\n"));
+					CMessageManager::GetInstance().AddMessage(_T("안전지대가 파괴되었습니다."));
 					zone.isDestroyed = true;
 					zone.rect = CRect(-1000, -1000, -900, -900); // 안전지대를 화면 밖으로 보냄.
 					activeSafeZoneCount--;
@@ -497,7 +513,9 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 			++collectedYellowMaterialCount;
 
 			CString debugMsg;
+
 			debugMsg.Format(_T("재료를 획득했습니다! 현재 획득한 재료 수: %d\n"), collectedYellowMaterialCount);
+			//CMessageManager::GetInstance().AddMessage(debugMsg);
 			OutputDebugString(debugMsg);
 
 			// 게임 목표 달성 확인
@@ -506,6 +524,7 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 				AfxMessageBox(_T("목표 달성! 모든 재료를 획득했습니다!"));
 				isGameOver = true;
 				// 추가 처리 (게임 종료, 다음 스테이지 등)
+				EndDialog(IDCANCEL); //디버깅 할때는 주석처리 해도 됨. 게임 이어가기 가능.
 			}
 		}
 	}
