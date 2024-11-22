@@ -73,12 +73,12 @@ void CDoorMenuDialog::OnBnClickedStageButton()
     
     }
 
-    // 각 스테이지 대화 상자 실행
+    //각 스테이지 대화 상자 실행
     CString msg;
     msg.Format(_T("Stage %d 시작!"), stageNumber);
     AfxMessageBox(msg);
 
-    // 각 스테이지에 맞는 게임 시작
-    CArrowKeyGameDialog arrowKeyGameDialog(stageNumber); // 생성자에 스테이지 전달
+    //각 스테이지에 맞는 게임 시작
+    CArrowKeyGameDialog arrowKeyGameDialog(stageNumber); //생성자에 스테이지 전달
     arrowKeyGameDialog.DoModal();
 }

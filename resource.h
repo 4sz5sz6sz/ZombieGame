@@ -73,15 +73,15 @@
 #define IDC_LIST_VACCINE_MACHINE        1044
 #define IDC_PIC_End                     1045
 #define IDC_BUTTON_EXIT                 1046
-#define IDC_STAGE_BUTTON1               1047
-#define IDC_STAGE_BUTTON2               1048
-#define IDC_STAGE_BUTTON3               1049
-#define IDC_STAGE_BUTTON4               1050
-#define IDC_STAGE_BUTTON5               1051
-#define IDC_STAGE_BUTTON6               1052
 #define IDC_LIST_SURABINVEN             1046
 #define IDC_BUTTON_SURAB_MOVE           1047
 #define IDC_LIST_SAVE_INVEN             1048
+#define IDC_STAGE_BUTTON1               1501
+#define IDC_STAGE_BUTTON2               1502
+#define IDC_STAGE_BUTTON3               1503
+#define IDC_STAGE_BUTTON4               1504
+#define IDC_STAGE_BUTTON5               1505
+#define IDC_STAGE_BUTTON6               1506
 
 // Next default values for new objects
 // 

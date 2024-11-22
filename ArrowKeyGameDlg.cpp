@@ -18,7 +18,7 @@ IMPLEMENT_DYNAMIC(CArrowKeyGameDialog, CDialogEx)
 
 CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ARROW_KEY_DIALOG, pParent),
-	player(8, 8),
+	player(6.5, 6.1),
 	remainingCooldownTime(0),
 	isCooldownActive(false),
 	playerInSafeZone(false),
@@ -33,9 +33,8 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullp
 	moveLeft = false;
 	moveRight = false;
 	moveSpeed = 0.4;	//0.4 추천
-	safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
-	safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
-	//InitializeStage(stageNumber);	//////////정말 중요@@@@@@@@@@@@@ 핵심
+	
+	InitializeStage(stageNumber);	//각 스테이지 별 환경 설정.
 	UINT_PTR m_nTimerID;
 
 }
@@ -276,7 +275,7 @@ int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
 	MoveWindow(0, 0, 800, 600);	//원하는 창 크기
 	playerRect = CRect(100, 100, 120, 120); // 플레이어 초기위치와 크기 설정
-	CRect safeZone(100, 100, 200, 200); // 안전지대의 위치와 크기 설정
+	//CRect safeZone(100, 100, 200, 200); // 안전지대의 위치와 크기 설정
 
 
 	CRect progressRect(10, 10, 200, 30);  // 프로그레스 바의 위치와 크기 설정
@@ -286,10 +285,7 @@ int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	cooldownProgressBar.SetPos(0);  // 초기값 설정
 	//cooldownProgressBar.SendMessage(PBM_SETBARCOLOR, 0, RGB(255, 0, 0)); // 빨간색 설정했는데... 안 먹힘..
 
-	zombies.push_back(CZombie(12, 10,1));
-	zombies.push_back(CZombie(15, 10,2));
-	zombies.push_back(CZombie(10, 15,3));
-	GenerateYellowMaterials(10);           // 노란재료 10개 생성
+	
 	SetTimer(1, 30, NULL);	//30ms에 한번 업데이트.
 
 	return 0;
@@ -532,19 +528,70 @@ void CArrowKeyGameDialog::UpdatePlayerHP()
 void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 {
 	// TODO: 여기에 구현 코드 추가.
+
+	// 기존 데이터 초기화
+	safeZones.clear();         // 기존 안전지대 초기화
+	zombies.clear();           // 기존 좀비 초기화
+	yellowMaterials.clear();   // 기존 노란재료 초기화
 	switch (stageNumber)
 	{
 	case 1:
 		// Stage 1 설정
+		safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
+		safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
+		zombies.push_back(CZombie(12, 10, 1,0.3));
+		zombies.push_back(CZombie(15, 10, 2, 0.3));
+		zombies.push_back(CZombie(10, 15, 3, 0.3));
+		GenerateYellowMaterials(10);           // 노란재료 10개 생성
 		break;
 	case 2:
 		// Stage 2 설정
+		// 안전지대
+		safeZones.push_back(CRect(50, 50, 150, 150));
+		safeZones.push_back(CRect(400, 400, 500, 500));
+		activeSafeZoneCount = safeZones.size();
+
+		// 좀비
+		zombies.push_back(CZombie(12, 10, 1));
+		zombies.push_back(CZombie(15, 10, 2));
+		zombies.push_back(CZombie(10, 15, 3));
+		zombies.push_back(CZombie(20, 25, 4)); // 추가 좀비
+
+		// 노란재료
+		GenerateYellowMaterials(15);
 		break;
 	case 3:
 		// Stage 3 설정
+		safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
+		safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
+		zombies.push_back(CZombie(12, 10, 1));
+		zombies.push_back(CZombie(15, 10, 2));
+		zombies.push_back(CZombie(10, 15, 3));
+		GenerateYellowMaterials(10);           // 노란재료 10개 생성
 		break;
 	case 4:
 		// Stage 4 설정
+		safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
+		safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
+		zombies.push_back(CZombie(12, 10, 1,0.3));
+		zombies.push_back(CZombie(15, 10, 2, 0.1));
+		zombies.push_back(CZombie(10, 15, 3, 0.2));
+		zombies.push_back(CZombie(22, 20, 4, 0.3));
+		zombies.push_back(CZombie(25, 20, 5, 0.4));
+		zombies.push_back(CZombie(20, 25, 6, 0.5));
+		zombies.push_back(CZombie(30, 32, 7, 0.3));
+		zombies.push_back(CZombie(40, 31, 8, 0.3));
+		zombies.push_back(CZombie(50, 37, 9, 0.3));
+		zombies.push_back(CZombie(-10, 39, 10, 0.5));
+		zombies.push_back(CZombie(-10, -10, 11,0.5));
+		zombies.push_back(CZombie(80, 45, 12,0.5));
+		zombies.push_back(CZombie(90, 65, 13, 0.4));
+		zombies.push_back(CZombie(100, 75, 14, 0.5));
+		zombies.push_back(CZombie(110, 55, 15, 0.5));
+		zombies.push_back(CZombie(-1, -1, 16, 0.5));
+		zombies.push_back(CZombie(-3, -2, 17, 0.5));
+		zombies.push_back(CZombie(-1, -3, 18, 0.5));
+		GenerateYellowMaterials(10);           // 노란재료 10개 생성
 		break;
 	case 5:
 		// Stage 5 설정
