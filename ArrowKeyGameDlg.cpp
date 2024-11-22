@@ -32,7 +32,7 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullp
 	moveDown = false;
 	moveLeft = false;
 	moveRight = false;
-	moveSpeed = 0.4;	//0.4 추천
+	moveSpeed = 0.4;	//0.4 추천, 60fps이면 0.2
 	
 	InitializeStage(stageNumber);	//각 스테이지 별 환경 설정.
 	UINT_PTR m_nTimerID;
@@ -286,7 +286,7 @@ int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//cooldownProgressBar.SendMessage(PBM_SETBARCOLOR, 0, RGB(255, 0, 0)); // 빨간색 설정했는데... 안 먹힘..
 
 	
-	SetTimer(1, 30, NULL);	//30ms에 한번 업데이트.
+	SetTimer(1, 30, NULL);	//30ms에 한번 업데이트.//16으로 설정하면 60fps
 
 	return 0;
 }
