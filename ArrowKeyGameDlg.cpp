@@ -108,40 +108,9 @@ void CArrowKeyGameDialog::OnPaint()
 		);
 	}
 
-	//체력바 그리기
-	int healthBarWidth = 200; // 체력바의 총 길이
-	int healthBarHeight = 20; // 체력바의 높이
-	int healthBarX = 10;      // 체력바의 X 좌표 (화면의 왼쪽)
-	int healthBarY = 40;      // 체력바의 Y 좌표 (화면의 위쪽)
 
-	//체력에 비례한 체력바 길이 계산
-	int currentHealthWidth = (int)(player.HP / 100.0 * healthBarWidth);
-
-	//체력바 배경 (회색)
-	CBrush bgBrush(RGB(200, 200, 200)); // 배경 색
-	dc.FillRect(CRect(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY + healthBarHeight), &bgBrush);
-
-	//체력바 (빨간색)
-	CBrush healthBrush(RGB(255, 0, 0)); // 체력 색
-	dc.FillRect(CRect(healthBarX, healthBarY, healthBarX + currentHealthWidth, healthBarY + healthBarHeight), &healthBrush);
-
-	//체력 값 텍스트 추가
-	CString hpText;
-	hpText.Format(_T("HP: %.0f%%"), player.HP);
-	dc.SetBkMode(TRANSPARENT);
-	dc.SetTextColor(RGB(0, 0, 0)); // 텍스트 색상: 검정색
-	dc.DrawText(hpText, CRect(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY + healthBarHeight), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-
-	CRect hpRect(
-		static_cast<int>(player.x * SCALE_FACTOR + SCALE_FACTOR + 10), // 플레이어 오른쪽에 약간 띄워 표시
-		static_cast<int>(player.y * SCALE_FACTOR),
-		static_cast<int>(player.x * SCALE_FACTOR + SCALE_FACTOR + 80),
-		static_cast<int>(player.y * SCALE_FACTOR + 20)
-	);
-	dc.SetBkMode(TRANSPARENT);	//투명 배경
-	//dc.SetTextColor(RGB(255, 0, 0)); //빨간색 텍스트
-	dc.SetTextColor(RGB(255, 165, 0)); //주황색 텍스트
-	dc.DrawText(hpText, &hpRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	UpdateHealthBar(dc);
+	DrawPlayerHealthText(dc);
 
 	//최근에 생성된 안전지대 위에 쿨타임 출력
 	if (!safeZones.empty()) {
@@ -176,6 +145,49 @@ void CArrowKeyGameDialog::OnPaint()
 	}
 
 	//DrawHUD(dc);
+}
+
+void CArrowKeyGameDialog::DrawPlayerHealthText(CPaintDC& dc) const
+{
+	CString hpText;	//체력 문자열 정의
+	hpText.Format(_T("HP: %.0f%%"), player.HP);
+	CRect hpRect(
+		static_cast<int>(player.x * SCALE_FACTOR + SCALE_FACTOR + 10), // 플레이어 오른쪽에 약간 띄워 표시
+		static_cast<int>(player.y * SCALE_FACTOR),
+		static_cast<int>(player.x * SCALE_FACTOR + SCALE_FACTOR + 80),
+		static_cast<int>(player.y * SCALE_FACTOR + 20)
+	);
+	dc.SetBkMode(TRANSPARENT);	//투명 배경
+	//dc.SetTextColor(RGB(255, 0, 0)); //빨간색 텍스트
+	dc.SetTextColor(RGB(255, 165, 0)); //주황색 텍스트
+	dc.DrawText(hpText, &hpRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+}
+
+void CArrowKeyGameDialog::UpdateHealthBar(CPaintDC& dc) const
+{
+	//체력바 그리기
+	int healthBarWidth = 200; // 체력바의 총 길이
+	int healthBarHeight = 20; // 체력바의 높이
+	int healthBarX = 10;      // 체력바의 X 좌표 (화면의 왼쪽)
+	int healthBarY = 40;      // 체력바의 Y 좌표 (화면의 위쪽)
+
+	//체력에 비례한 체력바 길이 계산
+	int currentHealthWidth = (int)(player.HP / 100.0 * healthBarWidth);
+
+	//체력바 배경 (회색)
+	CBrush bgBrush(RGB(200, 200, 200)); // 배경 색
+	dc.FillRect(CRect(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY + healthBarHeight), &bgBrush);
+
+	//체력바 (빨간색)
+	CBrush healthBrush(RGB(255, 0, 0)); // 체력 색
+	dc.FillRect(CRect(healthBarX, healthBarY, healthBarX + currentHealthWidth, healthBarY + healthBarHeight), &healthBrush);
+
+	//체력 값 텍스트 추가
+	CString hpText;	//체력 문자열 정의
+	hpText.Format(_T("HP: %.0f%%"), player.HP);
+	dc.SetBkMode(TRANSPARENT);
+	dc.SetTextColor(RGB(0, 0, 0)); // 텍스트 색상: 검정색
+	dc.DrawText(hpText, CRect(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY + healthBarHeight), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 
@@ -382,13 +394,6 @@ void CArrowKeyGameDialog::UpdateCooldown()
 		int progress = (int)((remainingCooldownTime) / 3.0 * 100.0);
 		//int progress = (int)((3.0-remainingCooldownTime) / 3.0 * 100.0);
 
-		/*CString debugMsg;
-		debugMsg.Format(_T("cooldownStartTime: %.2f, now: %.2f, elapsed: %.2f, remainingCooldownTime: %.2f\n"),
-			std::chrono::duration<double>(player.lastSafeZoneTime.time_since_epoch()).count(),
-			std::chrono::duration<double>(now.time_since_epoch()).count(),
-			elapsed.count(),
-			remainingCooldownTime);
-		OutputDebugString(debugMsg);*/
 
 
 		cooldownProgressBar.SetPos(progress);
@@ -519,7 +524,7 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 			OutputDebugString(debugMsg);
 
 			// 게임 목표 달성 확인
-			if (collectedYellowMaterialCount >= 10) {
+			if (collectedYellowMaterialCount >= requiredMaterialCount) {
 				OutputDebugString(_T("목표 달성! 모든 재료를 획득했습니다!\n"));
 				AfxMessageBox(_T("목표 달성! 모든 재료를 획득했습니다!"));
 				isGameOver = true;
@@ -574,6 +579,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 	safeZones.clear();         // 기존 안전지대 초기화
 	zombies.clear();           // 기존 좀비 초기화
 	yellowMaterials.clear();   // 기존 노란재료 초기화
+	collectedYellowMaterialCount = 0; // 현재까지 수집한 재료 수 초기화
 
 	isCooldownActive = false;  // 쿨타임 비활성화
 	remainingCooldownTime = 0.0; // 쿨타임 초기화
@@ -582,12 +588,14 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 	{
 	case 1:
 		// Stage 1 설정
-		safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
-		safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
+		safeZones.push_back(CRect(100, 100, 200, 200)); //activeSafeZoneCount++;
+		safeZones.push_back(CRect(300, 300, 400, 400)); //activeSafeZoneCount++;
+		activeSafeZoneCount = (int)safeZones.size();
 		zombies.push_back(CZombie(12, 10, 1,0.3));
 		zombies.push_back(CZombie(15, 10, 2, 0.3));
 		zombies.push_back(CZombie(10, 15, 3, 0.3));
 		GenerateYellowMaterials(10);           // 노란재료 10개 생성
+		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	case 2:
 		// Stage 2 설정
@@ -604,20 +612,25 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 
 		// 노란재료
 		GenerateYellowMaterials(15);
+		requiredMaterialCount = 15;				// 목표 재료 수
 		break;
 	case 3:
 		// Stage 3 설정
-		safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
-		safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
+		safeZones.push_back(CRect(100, 100, 200, 200)); 
+		safeZones.push_back(CRect(300, 300, 400, 400)); 
+		activeSafeZoneCount = (int)safeZones.size();
 		zombies.push_back(CZombie(12, 10, 1));
 		zombies.push_back(CZombie(15, 10, 2));
 		zombies.push_back(CZombie(10, 15, 3));
 		GenerateYellowMaterials(10);           // 노란재료 10개 생성
+		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	case 4:
 		// Stage 4 설정
-		safeZones.push_back(CRect(100, 100, 200, 200)); activeSafeZoneCount++;
-		safeZones.push_back(CRect(300, 300, 400, 400)); activeSafeZoneCount++;
+		safeZones.push_back(CRect(100, 100, 200, 200)); 
+		safeZones.push_back(CRect(300, 300, 400, 400)); 
+		activeSafeZoneCount = (int)safeZones.size();
+
 		zombies.push_back(CZombie(12, 10, 1,0.3));
 		zombies.push_back(CZombie(15, 10, 2, 0.1));
 		zombies.push_back(CZombie(10, 15, 3, 0.2));
@@ -637,6 +650,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(-3, -2, 17, 0.5));
 		zombies.push_back(CZombie(-1, -3, 18, 0.5));
 		GenerateYellowMaterials(10);           // 노란재료 10개 생성
+		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	case 5:
 		// Stage 5 설정

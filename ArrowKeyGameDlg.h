@@ -38,6 +38,8 @@ public:
 	//double playerY;	//네모의 위치
 	int squareSize;	//네모의 크기
 	afx_msg void OnPaint();
+	void DrawPlayerHealthText(CPaintDC& dc) const;	//Player 옆, 체력바 업데이트
+	void UpdateHealthBar(CPaintDC& dc) const;	//11시 방향, 체력바 업데이트
 	void UpdateMovement();	// OnTimer(), 위치 업데이트
 	void UpdateCooldown();	// 쿨타임 업데이트
 	void UpdateSafeZones(); // 안전지대 업데이트
@@ -90,4 +92,6 @@ public:
 	// 각 스테이지 별 환경 세팅 (ex. 좀비, 플레이어, 이동속도)
 	void InitializeStage(int stageNumber);
 
+	// 현재 스테이지의 목표 재료 수
+	int requiredMaterialCount;
 };
