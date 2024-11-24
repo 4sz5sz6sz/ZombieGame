@@ -113,11 +113,36 @@ void CArrowKeyGameDialog::OnPaint()
 	}
 
 
-	UpdateHealthBar(dc);
-	DrawPlayerHealthText(dc);
+	UpdateHealthBar(dc);		//11시 방향, 체력바 업데이트
+	DrawPlayerHealthText(dc);	//Player 옆, 체력 업데이트
 	DrawMaterialCount(dc); 	// 재료 카운트 출력
+	DrawCooldownOnSafeZone(dc);	//최근에 생성된 안전지대 위에 쿨타임 출력
+	DrawMessageLog(dc);	//알림 메시지 출력
 
-	//최근에 생성된 안전지대 위에 쿨타임 출력
+	//DrawHUD(dc);
+}
+
+//알림 메시지 출력
+void CArrowKeyGameDialog::DrawMessageLog(CPaintDC& dc)
+{
+	// 메시지 출력 위치
+	int startX = 10;
+	int startY = 480; // 화면 아래쪽
+	int lineHeight = 20;
+
+	auto messages = CMessageManager::GetInstance().GetMessages();
+	for (size_t i = 0; i < messages.size(); ++i) {
+		CString message = messages[i];
+		CRect messageRect(startX, startY + i * lineHeight, startX + 300, startY + (i + 1) * lineHeight);
+		dc.SetBkMode(TRANSPARENT);
+		dc.SetTextColor(RGB(0, 0, 0)); // 흰색 텍스트
+		dc.DrawText(message, &messageRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	}
+}
+
+//최근에 생성된 안전지대 위에 쿨타임 출력
+void CArrowKeyGameDialog::DrawCooldownOnSafeZone(CPaintDC& dc)
+{
 	if (!safeZones.empty()) {
 		CSafeZone latestZone = safeZones.back();  //가장 최근에 생성된 안전지대
 
@@ -134,22 +159,6 @@ void CArrowKeyGameDialog::OnPaint()
 			dc.DrawText(timeText, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		}
 	}
-
-	// 메시지 출력 위치
-	int startX = 10;
-	int startY = 480; // 화면 아래쪽
-	int lineHeight = 20;
-
-	auto messages = CMessageManager::GetInstance().GetMessages();
-	for (size_t i = 0; i < messages.size(); ++i) {
-		CString message = messages[i];
-		CRect messageRect(startX, startY + i * lineHeight, startX + 300, startY + (i + 1) * lineHeight);
-		dc.SetBkMode(TRANSPARENT);
-		dc.SetTextColor(RGB(0, 0, 0)); // 흰색 텍스트
-		dc.DrawText(message, &messageRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-	}
-
-	//DrawHUD(dc);
 }
 
 void CArrowKeyGameDialog::DrawPlayerHealthText(CPaintDC& dc) const
@@ -475,10 +484,12 @@ void CArrowKeyGameDialog::GenerateYellowMaterials(int count)
 	// TODO: 여기에 구현 코드 추가.
 	srand((unsigned)time(NULL)); // 랜덤 시드 설정
 
-	CRect clientRect;
-	GetClientRect(&clientRect); // 현재 창의 크기를 얻음
-	int maxX = clientRect.Width() / 7.6;
-	int maxY = clientRect.Height() / 7.6;
+	//CRect clientRect;
+	//GetClientRect(&clientRect); // 현재 창의 크기를 얻음
+	/*int maxX = clientRect.Width() / 7.6;
+	int maxY = clientRect.Height() / 7.6;*/
+	int maxX = stageWidth / 23;
+	int maxY = stageHeight / 23;
 
 	CString debugMsg;
 	debugMsg.Format(_T("maxX: %d, maxY: %d\n"), maxX, maxY);
@@ -490,12 +501,12 @@ void CArrowKeyGameDialog::GenerateYellowMaterials(int count)
 		double x, y;
 		//double x = 37;
 		//double y = 26;
-		//double x = clientRect.Width()/7.6;
-		//double y = clientRect.Height()/7.6;
+		//double x = maxX;
+		//double y = maxY;
 		int cnt = 0;
 		while (++cnt) {
-			x = (rand() % maxX) * 1;
-			y = (rand() % maxY) * 1;
+			x = (rand() % (maxX * 20)) * 0.05;
+			y = (rand() % (maxY * 20)) * 0.05;
 			//100번 넘게 재실행 된다면, 그냥 인정하고 생성시키기
 			if (cnt>100) break;
 
