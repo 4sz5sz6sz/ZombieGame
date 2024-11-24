@@ -94,4 +94,6 @@ public:
 
 	// 현재 스테이지의 목표 재료 수
 	int requiredMaterialCount;
+	// 재료 수 출력
+	void DrawMaterialCount(CDC& dc) const;
 };

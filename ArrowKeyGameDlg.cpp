@@ -111,6 +111,7 @@ void CArrowKeyGameDialog::OnPaint()
 
 	UpdateHealthBar(dc);
 	DrawPlayerHealthText(dc);
+	DrawMaterialCount(dc); 	// 재료 카운트 출력
 
 	//최근에 생성된 안전지대 위에 쿨타임 출력
 	if (!safeZones.empty()) {
@@ -659,4 +660,22 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		// Stage 6 설정
 		break;
 	}
+}
+
+
+// 재료 수 출력
+void CArrowKeyGameDialog::DrawMaterialCount(CDC& dc) const
+{
+	// TODO: 여기에 구현 코드 추가.
+	CString materialCountText;
+	materialCountText.Format(_T("재료: %d / %d"), collectedYellowMaterialCount, requiredMaterialCount);
+
+	// 11시 방향 위치 설정
+	int textX = 210;  // 화면 왼쪽 여백
+	int textY = 10;  // 화면 상단 여백
+	CRect textRect(textX, textY, textX + 200, textY + 30); // 텍스트 위치와 크기 설정
+
+	dc.SetBkMode(TRANSPARENT);  // 투명 배경
+	dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
+	dc.DrawText(materialCountText, &textRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 }
