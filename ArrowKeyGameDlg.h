@@ -96,4 +96,9 @@ public:
 	int requiredMaterialCount;
 	// 재료 수 출력
 	void DrawMaterialCount(CDC& dc) const;
+	virtual BOOL OnInitDialog();
+	
+	int currentStage; // 현재 스테이지
+	int stageWidth;		// 창 크기 너비
+	int stageHeight;	// 창 크기 높이
 };

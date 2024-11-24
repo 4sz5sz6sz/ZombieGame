@@ -24,7 +24,8 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullp
 	isCooldownActive(false),
 	playerInSafeZone(false),
 	collectedYellowMaterialCount(0),
-	activeSafeZoneCount(0)
+	activeSafeZoneCount(0),
+	currentStage(stageNumber)
 {
 	isGameOver = false;
 	squareSize = 20;         // 네모의 크기
@@ -35,7 +36,10 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullp
 	moveRight = false;
 	moveSpeed = 0.4;	//0.4 추천, 60fps이면 0.2
 	
-	InitializeStage(stageNumber);	//각 스테이지 별 환경 설정.
+	//어차피 OnInitDialog()에서 변경 될 예정. 근데 warning 없애려고 초기화함.
+	requiredMaterialCount = 0;
+	stageHeight = 0;
+	stageWidth = 0;
 	//UINT_PTR m_nTimerID;
 
 }
@@ -73,8 +77,8 @@ void CArrowKeyGameDialog::OnPaint()
 	for (auto& material : yellowMaterials) {
 		if (!material.collected) {
 			dc.FillSolidRect(
-				(int)material.x * SCALE_FACTOR,
-				(int)material.y * SCALE_FACTOR,
+				static_cast<int>(material.x * SCALE_FACTOR),
+				static_cast<int>(material.y * SCALE_FACTOR),
 				SCALE_FACTOR,
 				SCALE_FACTOR,
 				RGB(255, 255, 0)); //노란색 네모 그리기
@@ -321,9 +325,7 @@ int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
-	MoveWindow(0, 0, 800, 600);	//원하는 창 크기
-	//playerRect = CRect(100, 100, 120, 120); // 플레이어 초기위치와 크기 설정
-	//CRect safeZone(100, 100, 200, 200); // 안전지대의 위치와 크기 설정
+	
 
 
 	CRect progressRect(10, 10, 200, 30);  // 프로그레스 바의 위치와 크기 설정
@@ -473,16 +475,27 @@ void CArrowKeyGameDialog::GenerateYellowMaterials(int count)
 	// TODO: 여기에 구현 코드 추가.
 	srand((unsigned)time(NULL)); // 랜덤 시드 설정
 
+	CRect clientRect;
+	GetClientRect(&clientRect); // 현재 창의 크기를 얻음
+	int maxX = clientRect.Width() / 7.6;
+	int maxY = clientRect.Height() / 7.6;
+
+	CString debugMsg;
+	debugMsg.Format(_T("maxX: %d, maxY: %d\n"), maxX, maxY);
+	OutputDebugString(debugMsg);
+
 	for (int i = 0; i < count; ++i) {
 		//double x = (rand() % 40 + 5) * 0.5;
 		//double y = (rand() % 30 + 5) * 0.5;
 		double x, y;
 		//double x = 37;
 		//double y = 26;
+		//double x = clientRect.Width()/7.6;
+		//double y = clientRect.Height()/7.6;
 		int cnt = 0;
 		while (++cnt) {
-			x = (rand() % 37) * 1;
-			y = (rand() % 26) * 1;
+			x = (rand() % maxX) * 1;
+			y = (rand() % maxY) * 1;
 			//100번 넘게 재실행 된다면, 그냥 인정하고 생성시키기
 			if (cnt>100) break;
 
@@ -490,17 +503,17 @@ void CArrowKeyGameDialog::GenerateYellowMaterials(int count)
 			if (player.CheckCollision(x, y, player, 10)) continue;
 			
 			//스폰 지점이 안전지대 내부에 있다면, 리롤.
-			bool ret = false;
+			bool inSafeZone = false;
 			for (auto& zone : safeZones) {
 				//정적 메소드 처럼 그냥 player의 멤버함수를 호출함. 
 				//실제로는 노란재료-안전지대 간의 위치관계 검사. 
 				//player의 위치정보와는 무관함.
 				if (player.CheckCollision(x, y, zone.rect)) {
-					ret = true;
+					inSafeZone = true;
 					break;
 				}
 			}
-			if (ret) continue;
+			if (inSafeZone) continue;
 
 			//여기까지 continue 안되고 무사히 진행됐으면 x y 값 확정짓고 마무리.
 			break;
@@ -584,11 +597,17 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 
 	isCooldownActive = false;  // 쿨타임 비활성화
 	remainingCooldownTime = 0.0; // 쿨타임 초기화
+	
+	//창 크기 디폴트 값
+	stageWidth = 800;
+	stageHeight = 600;
 
 	switch (stageNumber)
 	{
 	case 1:
 		// Stage 1 설정
+		stageWidth = 800;
+		stageHeight = 600;
 		safeZones.push_back(CRect(100, 100, 200, 200)); //activeSafeZoneCount++;
 		safeZones.push_back(CRect(300, 300, 400, 400)); //activeSafeZoneCount++;
 		activeSafeZoneCount = (int)safeZones.size();
@@ -600,8 +619,10 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 2:
 		// Stage 2 설정
+		stageWidth = 1000;
+		stageHeight = 700;
 		// 안전지대
-		safeZones.push_back(CRect(50, 50, 150, 150));
+		safeZones.push_back(CRect(100, 100, 200, 200));
 		safeZones.push_back(CRect(400, 400, 500, 500));
 		activeSafeZoneCount = (int)safeZones.size();
 
@@ -617,6 +638,8 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 3:
 		// Stage 3 설정
+		stageWidth = 1200;
+		stageHeight = 800;
 		safeZones.push_back(CRect(100, 100, 200, 200)); 
 		safeZones.push_back(CRect(300, 300, 400, 400)); 
 		activeSafeZoneCount = (int)safeZones.size();
@@ -628,6 +651,8 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 4:
 		// Stage 4 설정
+		stageWidth = 1600;
+		stageHeight = 1000;
 		safeZones.push_back(CRect(100, 100, 200, 200)); 
 		safeZones.push_back(CRect(300, 300, 400, 400)); 
 		activeSafeZoneCount = (int)safeZones.size();
@@ -655,9 +680,29 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 5:
 		// Stage 5 설정
+		stageWidth = 1600;
+		stageHeight = 1000;
+		safeZones.push_back(CRect(100, 100, 200, 200));
+		safeZones.push_back(CRect(300, 300, 400, 400));
+		activeSafeZoneCount = (int)safeZones.size();
+		zombies.push_back(CZombie(12, 10, 1));
+		zombies.push_back(CZombie(15, 10, 2));
+		zombies.push_back(CZombie(10, 15, 3));
+		GenerateYellowMaterials(10);           // 노란재료 10개 생성
+		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	case 6:
 		// Stage 6 설정
+		stageWidth = 1600;
+		stageHeight = 1000;
+		safeZones.push_back(CRect(100, 100, 200, 200));
+		safeZones.push_back(CRect(300, 300, 400, 400));
+		activeSafeZoneCount = (int)safeZones.size();
+		zombies.push_back(CZombie(12, 10, 1));
+		zombies.push_back(CZombie(15, 10, 2));
+		zombies.push_back(CZombie(10, 15, 3));
+		GenerateYellowMaterials(10);           // 노란재료 10개 생성
+		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	}
 }
@@ -678,4 +723,18 @@ void CArrowKeyGameDialog::DrawMaterialCount(CDC& dc) const
 	dc.SetBkMode(TRANSPARENT);  // 투명 배경
 	dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
 	dc.DrawText(materialCountText, &textRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+}
+
+
+BOOL CArrowKeyGameDialog::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// TODO:  여기에 추가 초기화 작업을 추가합니다.
+	InitializeStage(currentStage);	//각 스테이지 별 환경 설정. //GetClientRect(&clientRect); 때문에 위치변.
+	MoveWindow(0, 0, stageWidth, stageHeight);	
+
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }
