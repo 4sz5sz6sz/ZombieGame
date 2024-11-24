@@ -32,6 +32,7 @@ void CMachineDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CMachineDlg, CDialogEx)
 	ON_BN_CLICKED(IDCANCEL, &CMachineDlg::OnBnClickedCancel)
 	ON_BN_CLICKED(IDC_BUTTON_MACHINE_MOVE, &CMachineDlg::OnBnClickedButtonMachineMove)
+	ON_BN_CLICKED(IDC_BUTTON_MAKE, &CMachineDlg::OnBnClickedButtonMake)
 END_MESSAGE_MAP()
 
 
@@ -136,4 +137,10 @@ void CMachineDlg::OnBnClickedButtonMachineMove()
 		m_listMachineInven.DeleteString(leftIndex);
 		m_listVaccineMachine.AddString(str);
 	}
+}
+
+
+void CMachineDlg::OnBnClickedButtonMake()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }

@@ -32,4 +32,5 @@ public:
 	CString m_strMachineInven[10];
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedButtonMachineMove();
+	afx_msg void OnBnClickedButtonMake();
 };

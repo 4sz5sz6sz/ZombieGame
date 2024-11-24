@@ -8,6 +8,7 @@
 #include "ZombieGameDlg.h"
 #include "afxdialogex.h"
 #include "CSequenceDlg.h"
+#include "CSequence2.h"
 #include "CManufacture.h"
 #include "ArrowKeyGameDlg.h"
 #include "CSurabDlg.h"
@@ -78,6 +79,7 @@ BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_VACCINE_MANFACTURING_MACHINE, &CZombieGameDlg::OnBnClickedButtonVaccineManfacturingMachine)
 	ON_BN_CLICKED(IDC_BUTTON_DOOR, &CZombieGameDlg::OnBnClickedButtonDoor)
 	ON_BN_CLICKED(IDC_BUTTON_DRAWER, &CZombieGameDlg::OnBnClickedButtonDrawer)
+	ON_BN_CLICKED(IDC_BUTTON_PHONE, &CZombieGameDlg::OnBnClickedButtonPhone)
 END_MESSAGE_MAP()
 
 
@@ -311,4 +313,12 @@ void CZombieGameDlg::OnBnClickedButtonDrawer()
 			GetDlgItem(IDC_BUTTON_DRAWER)->EnableWindow(false);
 		}
 	}
+}
+
+
+void CZombieGameDlg::OnBnClickedButtonPhone()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CSequence2 Sequence2;
+	Sequence2.DoModal();
 }

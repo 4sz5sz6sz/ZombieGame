@@ -52,4 +52,5 @@ public:
 	CListBox m_listInven;
 	CString m_strInven[10];
 	afx_msg void OnBnClickedButtonDrawer();
+	afx_msg void OnBnClickedButtonPhone();
 };
