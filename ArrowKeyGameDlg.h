@@ -106,4 +106,6 @@ public:
 	int stageHeight;	// 창 크기 높이
 	
 	
+	// 안전지대 생성 (4단계)
+	std::vector<CSafeZone> GenerateSafeZones(int stageWidth, int stageHeight, int safeZoneHeight=10, int safeZoneSpacing=100, int safeZoneWidth=100, int columnSpacing=100, int columns=9);
 };

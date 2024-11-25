@@ -553,9 +553,12 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 				AfxMessageBox(_T("목표 달성! 모든 재료를 획득했습니다!"));
 				isGameOver = true;
 				// 추가 처리 (게임 종료, 다음 스테이지 등)
-				/*if (지금이 6단계라면) {
-					노란 물약 가져오기
-				}*/
+				//if (currentStage == 6) {
+				//	m_listInven.AddString(_T("노란 물약"));	//노란 물약 가져오기.
+				//}
+				//CString msg;
+				//msg.Format(_T("6단계를 클리어하여 노란 물약을 획득했습니다!"));
+				//AfxMessageBox(msg);
 				EndDialog(IDCANCEL); //디버깅 할때는 주석처리 해도 됨. 게임 이어가기 가능.
 			}
 		}
@@ -667,8 +670,8 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		player.x = 7;
 		player.y = 7;
 		player.safeZoneSize = 50;
-		stageWidth = 1200;
-		stageHeight = 800;
+		stageWidth = 800;
+		stageHeight = 600;
 		safeZones.push_back(CRect(100, 100, 200, 200)); 
 		safeZones.push_back(CRect(300, 300, 400, 400)); 
 		activeSafeZoneCount = (int)safeZones.size();
@@ -680,12 +683,27 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 4:
 		// Stage 4 설정
-		player.x = 7;
-		player.y = 7;
+		player.x = 40;
+		player.y = 22;
 		stageWidth = 1600;
 		stageHeight = 1000;
-		safeZones.push_back(CRect(100, 100, 200, 200)); 
-		safeZones.push_back(CRect(300, 300, 400, 400)); 
+
+		safeZones = GenerateSafeZones(
+			stageWidth,
+			stageHeight
+		);
+		
+		/*safeZones.push_back(CRect(700, 350, 900, 550));
+		safeZones.push_back(CRect(50, 50, 250, 250));
+		safeZones.push_back(CRect(100, 100, 700, 120));
+		safeZones.push_back(CRect(800, 200, 1500, 220));
+		safeZones.push_back(CRect(100, 100, 130, 800));*/
+
+		
+		
+		
+	
+		
 		activeSafeZoneCount = (int)safeZones.size();
 
 		zombies.push_back(CZombie(12, 10, 1,0.3));
@@ -706,23 +724,54 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(-100, -1, 16));
 		zombies.push_back(CZombie(-300, -2, 17));
 		zombies.push_back(CZombie(-100, -30, 18));
-		GenerateYellowMaterials(10);           // 노란재료 10개 생성
-		requiredMaterialCount = 10;				// 목표 재료 수
+
+		
+		
+		GenerateYellowMaterials(30);           // 노란재료 10개 생성
+		requiredMaterialCount = 30;				// 목표 재료 수
 		break;
 	case 5:
 		// Stage 5 설정
-		player.x = 7;
-		player.y = 7;
+		player.x = 40;
+		player.y = 22;
 		stageWidth = 1600;
 		stageHeight = 1000;
-		safeZones.push_back(CRect(100, 100, 200, 200));
-		safeZones.push_back(CRect(300, 300, 400, 400));
+
+		//safeZones.push_back(CRect(700, 350, 900, 550));
+		//safeZones.push_back(CRect(50, 50, 250, 250));
+		safeZones.push_back(CRect(100, 100, 700, 120));
+		safeZones.push_back(CRect(800, 200, 1500, 220));
+		safeZones.push_back(CRect(100, 300, 700, 320));
+		safeZones.push_back(CRect(800, 400, 1500, 420));
+		safeZones.push_back(CRect(100, 500, 700, 520));
+		safeZones.push_back(CRect(800, 600, 1500, 620));
+		safeZones.push_back(CRect(100, 700, 700, 720));
+		safeZones.push_back(CRect(800, 800, 1500, 820));
+		//safeZones.push_back(CRect(100, 100, 130, 800));
+
 		activeSafeZoneCount = (int)safeZones.size();
-		zombies.push_back(CZombie(12, 10, 1));
-		zombies.push_back(CZombie(15, 10, 2));
-		zombies.push_back(CZombie(10, 15, 3));
-		GenerateYellowMaterials(10);           // 노란재료 10개 생성
-		requiredMaterialCount = 10;				// 목표 재료 수
+
+		zombies.push_back(CZombie(12, 10, 1, 0.3));
+		zombies.push_back(CZombie(15, 10, 2, 0.1));
+		zombies.push_back(CZombie(10, 16, 3, 0.2));
+		zombies.push_back(CZombie(22, 21, 4, 0.3));
+		zombies.push_back(CZombie(26, 21, 5, 0.4));
+		zombies.push_back(CZombie(20, 26, 6, 0.5));
+		zombies.push_back(CZombie(30, 32, 7, 0.3));
+		zombies.push_back(CZombie(40, 31, 8, 0.3));
+		zombies.push_back(CZombie(50, 37, 9, 0.3));
+		zombies.push_back(CZombie(-10, 39, 10, 0.5));
+		zombies.push_back(CZombie(-10, -10, 11, 0.5));
+		zombies.push_back(CZombie(80, 45, 12));
+		zombies.push_back(CZombie(90, 65, 13));
+		zombies.push_back(CZombie(100, 75, 14));
+		zombies.push_back(CZombie(110, 55, 15));
+		zombies.push_back(CZombie(-100, -1, 16));
+		zombies.push_back(CZombie(-300, -2, 17));
+		zombies.push_back(CZombie(-100, -30, 18));
+
+		GenerateYellowMaterials(30);           // 노란재료 10개 생성
+		requiredMaterialCount = 30;				// 목표 재료 수
 		break;
 	case 6:
 		// Stage 6 설정
@@ -740,6 +789,8 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	}
+	
+	
 }
 
 
@@ -801,4 +852,38 @@ void CArrowKeyGameDialog::GenerateYellowMaterialAt(double x, double y)
 	CString debugMsg;
 	debugMsg.Format(_T("재료 생성 완료: (%f, %f)\n"), x, y);
 	OutputDebugString(debugMsg);
+}
+
+
+// 안전지대 생성 (4단계)
+std::vector<CSafeZone> CArrowKeyGameDialog::GenerateSafeZones(int stageWidth, int stageHeight, int safeZoneHeight, int safeZoneSpacing, int safeZoneWidth, int columnSpacing, int columns)
+{
+	//  10  // 높이
+	//	100 // 행 간격
+	//	100 // 너비
+	//	100 // 열 간격
+	//	9   // 열 개수
+	// TODO: 여기에 구현 코드 추가.
+	std::vector<CSafeZone> safeZones; // 안전지대를 저장할 벡터
+	bool isOddRow = true;             // 홀수 행인지 여부
+
+	for (int y = 50; y <= stageHeight - 50; y += safeZoneSpacing) {
+		int numZones = isOddRow ? columns : columns - 1; // n or n-1
+		int totalWidth = numZones * (safeZoneWidth + columnSpacing) - columnSpacing;
+		int startX = (stageWidth - totalWidth) / 2; // 가운데 정렬
+
+		for (int i = 0; i < numZones; ++i) {
+			CRect rect(
+				startX + i * (safeZoneWidth + columnSpacing), // X 시작 위치
+				y,                                           // Y 위치
+				startX + i * (safeZoneWidth + columnSpacing) + safeZoneWidth,
+				y + safeZoneHeight
+			);
+			CSafeZone safeZone(rect); // CSafeZone 생성자로 CRect 전달
+			safeZones.push_back(safeZone);
+		}
+		isOddRow = !isOddRow; // 다음 행은 짝수로 변경
+	}
+
+	return safeZones; // 생성된 안전지대 반환
 }
