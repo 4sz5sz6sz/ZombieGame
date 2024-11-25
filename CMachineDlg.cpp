@@ -49,7 +49,7 @@ void CMachineDlg::PrintPicture()
 	CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
 	dc = m_picture_control_End.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
 	CImage image;//불러오고 싶은 이미지를 로드할 CImage 
-	image.Load(_T("배드 엔딩"));//이미지 로드
+	image.Load(_T("ending_bad.png"));//이미지 로드
 
 	image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
 	ReleaseDC(dc);//DC 해제
@@ -65,7 +65,7 @@ void CMachineDlg::PrintPicture_Good()
 	CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
 	dc = m_picture_control_End.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
 	CImage image;//불러오고 싶은 이미지를 로드할 CImage 
-	image.Load(_T("해피 엔딩"));//이미지 로드
+	image.Load(_T("ending_happy.png"));//이미지 로드
 
 	image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
 	ReleaseDC(dc);//DC 해제
@@ -77,8 +77,8 @@ void CMachineDlg::PrintPicture_Good()
 void CMachineDlg::EndCheck()
 {
 	// TODO: 여기에 구현 코드 추가.
-		int count = m_listVaccineMachine.GetCount();
-	if (count == 4) {
+	int count1 = m_listVaccineMachine.GetCount();
+	if (count1 == 4) {
 		CString n1, n2, n3, n4;
 		m_listVaccineMachine.GetText(0, n1);
 		m_listVaccineMachine.GetText(1, n2);
@@ -93,7 +93,7 @@ void CMachineDlg::EndCheck()
 			PrintPicture();
 		}
 	}
-	else if (count > 4) {
+	else{
 		AfxMessageBox(_T("좀비 세상이다.."));
 		m_listVaccineMachine.ResetContent();
 	}
@@ -143,4 +143,5 @@ void CMachineDlg::OnBnClickedButtonMachineMove()
 void CMachineDlg::OnBnClickedButtonMake()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	EndCheck();
 }
