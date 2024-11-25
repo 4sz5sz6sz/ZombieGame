@@ -126,8 +126,10 @@ void CArrowKeyGameDialog::OnPaint()
 void CArrowKeyGameDialog::DrawMessageLog(CPaintDC& dc)
 {
 	// 메시지 출력 위치
-	int startX = 10;
-	int startY = 480; // 화면 아래쪽
+	//int startX = 10;
+	//int startY = 480; // 화면 아래쪽
+	int startX = 10;                     // 좌측 가장자리에서 10px 띄움
+	int startY = stageHeight - 100;      // 화면 아래에서 100px 위로
 	int lineHeight = 20;
 
 	auto messages = CMessageManager::GetInstance().GetMessages();
@@ -625,9 +627,13 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		safeZones.push_back(CRect(100, 100, 200, 200)); //activeSafeZoneCount++;
 		safeZones.push_back(CRect(300, 300, 400, 400)); //activeSafeZoneCount++;
 		activeSafeZoneCount = (int)safeZones.size();
-		zombies.push_back(CZombie(12, 10, 1,0.3));
+		zombies.push_back(CZombie(12, 10, 1, 0.3));
 		zombies.push_back(CZombie(15, 10, 2, 0.3));
 		zombies.push_back(CZombie(10, 15, 3, 0.3));
+		zombies.push_back(CZombie(-100, -15, 4));
+		zombies.push_back(CZombie(-50, -50, 5));
+		zombies.push_back(CZombie(200, 200, 6));
+		zombies.push_back(CZombie(40, 40, 7,0.3));
 		GenerateYellowMaterials(10);           // 노란재료 10개 생성
 		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
@@ -652,7 +658,8 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(20, 25, 4)); // 추가 좀비
 
 		// 노란재료
-		GenerateYellowMaterials(15);
+		GenerateYellowMaterials(14);
+		GenerateYellowMaterialAt(87.0,1.0);
 		requiredMaterialCount = 15;				// 목표 재료 수
 		break;
 	case 3:
