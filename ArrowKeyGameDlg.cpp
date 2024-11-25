@@ -19,7 +19,7 @@ IMPLEMENT_DYNAMIC(CArrowKeyGameDialog, CDialogEx)
 
 CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ARROW_KEY_DIALOG, pParent),
-	player(6.5, 6.1),
+	player(0, 0),	//어차피 나중에 초기화함.
 	remainingCooldownTime(0),
 	isCooldownActive(false),
 	playerInSafeZone(false),
@@ -227,10 +227,7 @@ void CArrowKeyGameDialog::UpdateMovement()
 	}
 	
 	//대각선 이동할 때 속도가 루트2(배) 만큼 빨라지는 현상 보정.
-	if (dx && dy) {	//대각선 이동일 때 속도 보정. 각 성분이 2로 보정됨. 체감 속도는 2루트2,
-		//double length = sqrt(dx * dx + dy * dy);
-		//double scalingFactor = (double)moveSpeed / length;
-		//double scalingFactor = 1/sqrt(2);
+	if (dx && dy) {	//대각선 이동일 때 속도 보정.
 		dx = dx / sqrt(2);
 		dy = dy / sqrt(2);
 	}
@@ -620,6 +617,9 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 	{
 	case 1:
 		// Stage 1 설정
+		player.x = 7;
+		player.y = 7;
+		player.safeZoneSize = 100;
 		stageWidth = 800;
 		stageHeight = 600;
 		safeZones.push_back(CRect(100, 100, 200, 200)); //activeSafeZoneCount++;
@@ -633,11 +633,16 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 2:
 		// Stage 2 설정
-		stageWidth = 1000;
-		stageHeight = 700;
+		player.x = 7;
+		player.y = 7;
+		player.safeZoneSize = 50;
+		stageWidth = 1800;
+		stageHeight = 400;
 		// 안전지대
 		safeZones.push_back(CRect(100, 100, 200, 200));
-		safeZones.push_back(CRect(400, 400, 500, 500));
+		safeZones.push_back(CRect(300, 250, 400, 350));
+		safeZones.push_back(CRect(500, 0, 600, 100));
+		safeZones.push_back(CRect(700, 250, 800, 350));
 		activeSafeZoneCount = (int)safeZones.size();
 
 		// 좀비
@@ -652,6 +657,9 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 3:
 		// Stage 3 설정
+		player.x = 7;
+		player.y = 7;
+		player.safeZoneSize = 50;
 		stageWidth = 1200;
 		stageHeight = 800;
 		safeZones.push_back(CRect(100, 100, 200, 200)); 
@@ -665,6 +673,8 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 4:
 		// Stage 4 설정
+		player.x = 7;
+		player.y = 7;
 		stageWidth = 1600;
 		stageHeight = 1000;
 		safeZones.push_back(CRect(100, 100, 200, 200)); 
@@ -682,18 +692,20 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(50, 37, 9, 0.3));
 		zombies.push_back(CZombie(-10, 39, 10, 0.5));
 		zombies.push_back(CZombie(-10, -10, 11,0.5));
-		zombies.push_back(CZombie(80, 45, 12,0.5));
-		zombies.push_back(CZombie(90, 65, 13, 0.4));
-		zombies.push_back(CZombie(100, 75, 14, 0.5));
-		zombies.push_back(CZombie(110, 55, 15, 0.5));
-		zombies.push_back(CZombie(-1, -1, 16, 0.5));
-		zombies.push_back(CZombie(-3, -2, 17, 0.5));
-		zombies.push_back(CZombie(-1, -3, 18, 0.5));
+		zombies.push_back(CZombie(80, 45, 12));
+		zombies.push_back(CZombie(90, 65, 13));
+		zombies.push_back(CZombie(100, 75, 14));
+		zombies.push_back(CZombie(110, 55, 15));
+		zombies.push_back(CZombie(-100, -1, 16));
+		zombies.push_back(CZombie(-300, -2, 17));
+		zombies.push_back(CZombie(-100, -30, 18));
 		GenerateYellowMaterials(10);           // 노란재료 10개 생성
 		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	case 5:
 		// Stage 5 설정
+		player.x = 7;
+		player.y = 7;
 		stageWidth = 1600;
 		stageHeight = 1000;
 		safeZones.push_back(CRect(100, 100, 200, 200));
@@ -707,6 +719,8 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		break;
 	case 6:
 		// Stage 6 설정
+		player.x = 7;
+		player.y = 7;
 		stageWidth = 1600;
 		stageHeight = 1000;
 		safeZones.push_back(CRect(100, 100, 200, 200));
@@ -746,9 +760,38 @@ BOOL CArrowKeyGameDialog::OnInitDialog()
 
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
 	InitializeStage(currentStage);	//각 스테이지 별 환경 설정. //GetClientRect(&clientRect); 때문에 위치변.
-	MoveWindow(0, 0, stageWidth, stageHeight);	
-
+	MoveWindow(0, 0, stageWidth, stageHeight);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
+
+
+// 지정된 좌표에 재료 생성
+void CArrowKeyGameDialog::GenerateYellowMaterialAt(double x, double y)
+{
+	// TODO: 여기에 구현 코드 추가.
+	// 스폰 지점이 플레이어와 가까운지 검사
+	if (player.CheckCollision(x, y, player, 10)) {
+		CString debugMsg;
+		debugMsg.Format(_T("재료를 생성할 수 없습니다: 플레이어와 너무 가까움 (%f, %f)\n"), x, y);
+		OutputDebugString(debugMsg);
+		return;
+	}
+
+	// 스폰 지점이 안전지대 내부에 있는지 검사
+	for (auto& zone : safeZones) {
+		if (player.CheckCollision(x, y, zone.rect)) {
+			CString debugMsg;
+			debugMsg.Format(_T("재료를 생성할 수 없습니다: 안전지대와 겹침 (%f, %f)\n"), x, y);
+			OutputDebugString(debugMsg);
+			return;
+		}
+	}
+
+	// 검사를 통과했으면 재료 생성
+	yellowMaterials.emplace_back(x, y);
+	CString debugMsg;
+	debugMsg.Format(_T("재료 생성 완료: (%f, %f)\n"), x, y);
+	OutputDebugString(debugMsg);
 }

@@ -87,6 +87,7 @@ public:
 	std::vector<CYellowMaterial> yellowMaterials; // 노란 재료 벡터
 	int collectedYellowMaterialCount; // 획득한 노란 재료 갯수
 	void GenerateYellowMaterials(int count); // 노란재료 생성
+	void GenerateYellowMaterialAt(double x, double y); // 지정된 좌표에 노란재료 생성
 
 	void CheckPlayerMaterialCollision();  // OnTimer(), 플레이어-재료 충돌 확인, 내부에서 material.CheckCollisionWithPlayer(x,y)가 n번 호출됨.
 	void UpdatePlayerHP();// Player-Zombie 충돌에 따른 체력 업데이트
@@ -103,4 +104,6 @@ public:
 	int currentStage; // 현재 스테이지
 	int stageWidth;		// 창 크기 너비
 	int stageHeight;	// 창 크기 높이
+	
+	
 };

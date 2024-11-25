@@ -10,7 +10,7 @@ class CArrowKeyGameDialog; //전방 선언
 
 class CPlayer : public CEntity {
 public:
-    //double x, y;             // 플레이어의 위치
+    //double x, y;             // 플레이어의 위치. CEntity에서 상속 받을 예정.
     double HP; // 체력
     int safeZoneSize;        // 설치되는 안전지대의 크기
     std::chrono::steady_clock::time_point lastSafeZoneTime; // 마지막 안전지대 설치 시간
