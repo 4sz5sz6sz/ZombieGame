@@ -15,6 +15,7 @@
 #define IDD_DIALOG_MACHINE              139
 #define IDD_DIALOG3                     141
 #define IDD_DIALOG_SURAB                143
+#define IDD_DOOR_MENU_DIALOG            147
 #define IDC_BUTTON_DOOR                 1000
 #define IDC_BUTTON_DRAWER               1001
 #define IDC_BUTTON_SAFE                 1002
@@ -36,6 +37,7 @@
 #define IDC_BUTTON_OPEN                 1013
 #define IDC_BUTTON_ITME_MOVE2           1013
 #define IDC_BUTTON_DELETE               1013
+#define IDC_BUTTON_HELP                 1013
 #define IDC_dd                          1014
 #define IDC_PIC_CALENDER                1015
 #define IDC_BUTTON_CALENDER             1016
@@ -70,15 +72,22 @@
 #define IDC_LIST_MYPOKET                1044
 #define IDC_LIST_VACCINE_MACHINE        1044
 #define IDC_PIC_End                     1045
+#define IDC_BUTTON_EXIT                 1046
 #define IDC_LIST_SURABINVEN             1046
 #define IDC_BUTTON_SURAB_MOVE           1047
 #define IDC_LIST_SAVE_INVEN             1048
+#define IDC_STAGE_BUTTON1               1501
+#define IDC_STAGE_BUTTON2               1502
+#define IDC_STAGE_BUTTON3               1503
+#define IDC_STAGE_BUTTON4               1504
+#define IDC_STAGE_BUTTON5               1505
+#define IDC_STAGE_BUTTON6               1506
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1048
 #define _APS_NEXT_SYMED_VALUE           101

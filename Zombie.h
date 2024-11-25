@@ -9,8 +9,8 @@ public:
     double zombieSpeed;
     int index;
 
-    CZombie(double startX, double startY, int idx)
-        : CEntity(startX, startY), index(idx), zombieSpeed(0.5) {}
+    CZombie(double startX, double startY, int idx, double speed=0.5)
+        : CEntity(startX, startY), index(idx), zombieSpeed(speed) {}
 
     bool IsPositionOccupied(double newX, double newY, const std::vector<CZombie>& zombies) const {
         for (const auto& zombie : zombies) {

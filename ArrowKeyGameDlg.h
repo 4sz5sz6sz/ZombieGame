@@ -20,7 +20,7 @@ class CArrowKeyGameDialog : public CDialogEx
 	DECLARE_DYNAMIC(CArrowKeyGameDialog)
 
 public:
-	CArrowKeyGameDialog(CWnd* pParent = nullptr);   // 표준 생성자입니다.
+	CArrowKeyGameDialog(int stageNumber, CWnd* pParent = nullptr);   // 표준 생성자입니다.
 	virtual ~CArrowKeyGameDialog();
 	//virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
@@ -38,6 +38,10 @@ public:
 	//double playerY;	//네모의 위치
 	int squareSize;	//네모의 크기
 	afx_msg void OnPaint();
+	void DrawMessageLog(CPaintDC& dc);		//알림 메시지 출력
+	void DrawCooldownOnSafeZone(CPaintDC& dc);	//최근에 생성된 안전지대 위에 쿨타임 출력
+	void DrawPlayerHealthText(CPaintDC& dc) const;	//Player 옆, 체력바 업데이트
+	void UpdateHealthBar(CPaintDC& dc) const;	//11시 방향, 체력바 업데이트
 	void UpdateMovement();	// OnTimer(), 위치 업데이트
 	void UpdateCooldown();	// 쿨타임 업데이트
 	void UpdateSafeZones(); // 안전지대 업데이트
@@ -50,7 +54,7 @@ public:
 	bool moveRight;
 
 	CPoint m_ptLocation;
-	CRect playerRect; // 네모의 위치
+	//CRect playerRect; // 네모의 위치
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnBnClickedOk();
@@ -87,4 +91,16 @@ public:
 	void CheckPlayerMaterialCollision();  // OnTimer(), 플레이어-재료 충돌 확인, 내부에서 material.CheckCollisionWithPlayer(x,y)가 n번 호출됨.
 	void UpdatePlayerHP();// Player-Zombie 충돌에 따른 체력 업데이트
 	bool isGameOver; // 게임오버 여부 저장. UpdatePlayerHP() 무한루프 방지.
+	// 각 스테이지 별 환경 세팅 (ex. 좀비, 플레이어, 이동속도)
+	void InitializeStage(int stageNumber);
+
+	// 현재 스테이지의 목표 재료 수
+	int requiredMaterialCount;
+	// 재료 수 출력
+	void DrawMaterialCount(CDC& dc) const;
+	virtual BOOL OnInitDialog();
+	
+	int currentStage; // 현재 스테이지
+	int stageWidth;		// 창 크기 너비
+	int stageHeight;	// 창 크기 높이
 };
