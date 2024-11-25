@@ -30,7 +30,7 @@ void CSurabDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CSurabDlg, CDialogEx)
-	ON_BN_CLICKED(IDOK, &CSurabDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDCANCEL, &CSurabDlg::OnBnClickedCancel)
 	ON_BN_CLICKED(IDC_BUTTON_SURAB_MOVE, &CSurabDlg::OnBnClickedButtonSurabMove)
 END_MESSAGE_MAP()
 
@@ -55,13 +55,13 @@ BOOL CSurabDlg::OnInitDialog()
 }
 
 
-void CSurabDlg::OnBnClickedOk()
+void CSurabDlg::OnBnClickedCancel()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	for (int i = 0; i < m_listSurabInven.GetCount(); i++) {
 		m_listSurabInven.GetText(i, m_strSurabInven[i]);
 	}
-	CDialogEx::OnOK();
+	CDialogEx::OnCancel();
 }
 
 

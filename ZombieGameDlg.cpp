@@ -300,7 +300,7 @@ void CZombieGameDlg::OnBnClickedButtonDrawer()
 		
 	}
 	m_listInven.ResetContent();
-	if (pSurab->DoModal() == IDOK) {
+	if (pSurab->DoModal() == IDCANCEL) {
 		for (int i = 0; i < 10; i++) {
 			m_strInven[i] = pSurab->m_strSurabInven[i];
 			if (m_strInven[i] == "빨간 물약")
