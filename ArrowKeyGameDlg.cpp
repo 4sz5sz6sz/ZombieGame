@@ -11,6 +11,8 @@
 #include "CMessageManager.h"
 #include <algorithm>	//max 함수
 #include <chrono>	//시간 함수
+#include "ZombieGameDlg.h" 
+#include "CDoorMenuDialog.h" 
 
 
 // ArrowKeyGameDlg 대화 상자
@@ -542,7 +544,6 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 			++collectedYellowMaterialCount;
 
 			CString debugMsg;
-
 			debugMsg.Format(_T("재료를 획득했습니다! 현재 획득한 재료 수: %d\n"), collectedYellowMaterialCount);
 			//CMessageManager::GetInstance().AddMessage(debugMsg);
 			OutputDebugString(debugMsg);
@@ -552,13 +553,21 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 				OutputDebugString(_T("목표 달성! 모든 재료를 획득했습니다!\n"));
 				AfxMessageBox(_T("목표 달성! 모든 재료를 획득했습니다!"));
 				isGameOver = true;
-				// 추가 처리 (게임 종료, 다음 스테이지 등)
-				//if (currentStage == 6) {
-				//	m_listInven.AddString(_T("노란 물약"));	//노란 물약 가져오기.
-				//}
-				//CString msg;
-				//msg.Format(_T("6단계를 클리어하여 노란 물약을 획득했습니다!"));
-				//AfxMessageBox(msg);
+				 //추가 처리 (게임 종료, 다음 스테이지 등)
+				if (currentStage == 6) {
+					// 상위 대화상자(CZombieGameDlg)를 거쳐 m_listInven에 접근
+					CWnd* pParent = GetParent(); // CDoorMenuDialog
+					if (pParent) {
+						CZombieGameDlg* pMainDlg = dynamic_cast<CZombieGameDlg*>(pParent->GetParent());
+						if (pMainDlg) {
+							pMainDlg->m_listInven.AddString(_T("노란 물약")); // 노란 물약 추가
+						}
+					}
+
+					CString msg;
+					msg.Format(_T("6단계를 클리어하여 노란 물약을 획득했습니다!"));
+					AfxMessageBox(msg);
+				}
 				EndDialog(IDCANCEL); //디버깅 할때는 주석처리 해도 됨. 게임 이어가기 가능.
 			}
 		}
