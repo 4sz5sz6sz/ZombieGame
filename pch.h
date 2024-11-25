@@ -9,4 +9,5 @@
 
 // 여기에 미리 컴파일하려는 헤더 추가
 #include "framework.h"
+extern bool stageCleared[8]; // 1~6단계의 클리어 여부
 #endif //PCH_H

@@ -53,4 +53,5 @@ public:
 	CString m_strInven[10];
 	afx_msg void OnBnClickedButtonDrawer();
 	afx_msg void OnBnClickedButtonPhone();
+	afx_msg void OnBnClickedButton1();
 };

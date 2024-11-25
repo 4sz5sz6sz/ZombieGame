@@ -14,6 +14,7 @@
 #include "CSurabDlg.h"
 #include "CMachineDlg.h"
 #include "CDoorMenuDialog.h"
+#include "CStageMenuDialog.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -80,6 +81,7 @@ BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_DOOR, &CZombieGameDlg::OnBnClickedButtonDoor)
 	ON_BN_CLICKED(IDC_BUTTON_DRAWER, &CZombieGameDlg::OnBnClickedButtonDrawer)
 	ON_BN_CLICKED(IDC_BUTTON_PHONE, &CZombieGameDlg::OnBnClickedButtonPhone)
+	ON_BN_CLICKED(IDC_BUTTON1, &CZombieGameDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -324,3 +326,11 @@ void CZombieGameDlg::OnBnClickedButtonPhone()
 }
 
 
+
+
+void CZombieGameDlg::OnBnClickedButton1()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CStageMenuDialog stageMenuDialog;
+	stageMenuDialog.DoModal(); // 모달 창으로 표시
+}

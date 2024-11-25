@@ -12,7 +12,8 @@
 #include <algorithm>	//max 함수
 #include <chrono>	//시간 함수
 #include "ZombieGameDlg.h" 
-#include "CDoorMenuDialog.h" 
+#include "CDoorMenuDialog.h"	//곧 없앨 듯. CStageMenuDialog.h로 대체됨.
+#include "CStageMenuDialog.h"
 
 
 // ArrowKeyGameDlg 대화 상자
@@ -36,7 +37,7 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullp
 	moveDown = false;
 	moveLeft = false;
 	moveRight = false;
-	moveSpeed = 0.4;	//0.4 추천, 60fps이면 0.2
+	moveSpeed = 0.4;	//0.4 추천, 디버깅 용이면 0.8로 세팅해놓고 버그판 세팅 가능
 	
 	//어차피 OnInitDialog()에서 변경 될 예정. 근데 warning 없애려고 초기화함.
 	requiredMaterialCount = 0;
@@ -549,12 +550,17 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 			OutputDebugString(debugMsg);
 
 			// 게임 목표 달성 확인
-			if (collectedYellowMaterialCount >= requiredMaterialCount) {
+			if (isGameOver != true && collectedYellowMaterialCount >= requiredMaterialCount) {
 				OutputDebugString(_T("목표 달성! 모든 재료를 획득했습니다!\n"));
 				AfxMessageBox(_T("목표 달성! 모든 재료를 획득했습니다!"));
 				isGameOver = true;
-				 //추가 처리 (게임 종료, 다음 스테이지 등)
-				if (currentStage == 6) {
+
+				// CStageMenuDialog에 클리어 정보 전달
+				CStageMenuDialog* pStageDialog = dynamic_cast<CStageMenuDialog*>(GetParent());
+				
+
+				 //6단계 추가 처리
+				if (currentStage == 6 && stageCleared[currentStage + 1]==false) {
 					// 상위 대화상자(CZombieGameDlg)를 거쳐 m_listInven에 접근
 					CWnd* pParent = GetParent(); // CDoorMenuDialog
 					if (pParent) {
@@ -568,6 +574,9 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 					msg.Format(_T("6단계를 클리어하여 노란 물약을 획득했습니다!"));
 					AfxMessageBox(msg);
 				}
+
+				//공통) 클리어 처리
+				stageCleared[currentStage + 1] = true; // 스테이지 클리어 처리
 				EndDialog(IDCANCEL); //디버깅 할때는 주석처리 해도 됨. 게임 이어가기 가능.
 			}
 		}
@@ -790,11 +799,16 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		stageHeight = 1000;
 		safeZones.push_back(CRect(100, 100, 200, 200));
 		safeZones.push_back(CRect(300, 300, 400, 400));
+		//safeZones.push_back(CRect(500, 600, 700, 800));
 		activeSafeZoneCount = (int)safeZones.size();
 		zombies.push_back(CZombie(12, 10, 1));
 		zombies.push_back(CZombie(15, 10, 2));
 		zombies.push_back(CZombie(10, 15, 3));
-		GenerateYellowMaterials(10);           // 노란재료 10개 생성
+		GenerateYellowMaterials(7);           // 노란재료 7개 생성
+		//가장자리에 3개 생성
+		GenerateYellowMaterialAt(76.0, 1.0);
+		GenerateYellowMaterialAt(75.6, 44.0);
+		GenerateYellowMaterialAt(2.0, 45.0);
 		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	}

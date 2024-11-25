@@ -194,6 +194,7 @@
     <ClInclude Include="CSafeZone.h" />
     <ClInclude Include="CSequence2.h" />
     <ClInclude Include="CSequenceDlg.h" />
+    <ClInclude Include="CStageMenuDialog.h" />
     <ClInclude Include="CSurabDlg.h" />
     <ClInclude Include="CYellowMaterial.h" />
     <ClInclude Include="CZombieGameChestDlg.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="CSafeZone.cpp" />
     <ClCompile Include="CSequence2.cpp" />
     <ClCompile Include="CSequenceDlg.cpp" />
+    <ClCompile Include="CStageMenuDialog.cpp" />
     <ClCompile Include="CSurabDlg.cpp" />
     <ClCompile Include="CYellowMaterial.cpp" />
     <ClCompile Include="CZombieGameChestDlg.cpp" />
