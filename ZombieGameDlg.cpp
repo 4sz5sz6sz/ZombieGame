@@ -322,3 +322,5 @@ void CZombieGameDlg::OnBnClickedButtonPhone()
 	CSequence2 Sequence2;
 	Sequence2.DoModal();
 }
+
+

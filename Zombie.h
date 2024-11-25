@@ -24,27 +24,34 @@ public:
     }
 
     void MoveTowards(double playerX, double playerY, const std::vector<CZombie>& zombies, const std::vector<CSafeZone>& safeZones) {
-        double newX = x;
-        double newY = y;
-        
+        double dx = 0.0, dy = 0.0;
+
         if (rand() % 3 == 0) {
-            // 랜덤 이동
+            // 33% 확률로 랜덤 이동
             int randomDirection = rand() % 4;  // 0: 상, 1: 하, 2: 좌, 3: 우
             switch (randomDirection) {
-            case 0: newY -= zombieSpeed; break;  // 상
-            case 1: newY += zombieSpeed; break;  // 하
-            case 2: newX -= zombieSpeed; break;  // 좌
-            case 3: newX += zombieSpeed; break;  // 우
+            case 0: dy = -zombieSpeed; break;  // 상
+            case 1: dy = zombieSpeed; break;  // 하
+            case 2: dx = -zombieSpeed; break;  // 좌
+            case 3: dx = zombieSpeed; break;  // 우
             }
         }
         else {
             // 플레이어 방향으로 이동
-            if (x < playerX) newX += zombieSpeed;
-            else if (x > playerX) newX -= zombieSpeed;
+            if (x < playerX) dx = zombieSpeed;
+            else if (x > playerX) dx = -zombieSpeed;
 
-            if (y < playerY) newY += zombieSpeed;
-            else if (y > playerY) newY -= zombieSpeed;
+            if (y < playerY) dy = zombieSpeed;
+            else if (y > playerY) dy = -zombieSpeed;
         }
+
+        if (dx && dy) {
+            dx /= sqrt(2);
+            dy /= sqrt(2);
+        }
+
+        double newX = x + dx;
+        double newY = y + dy;
 
         if (!IsInSafeZones(newX, newY, safeZones) && !IsPositionOccupied(newX, newY, zombies)) {
             x = newX;

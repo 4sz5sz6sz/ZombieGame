@@ -554,6 +554,9 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 				AfxMessageBox(_T("목표 달성! 모든 재료를 획득했습니다!"));
 				isGameOver = true;
 				// 추가 처리 (게임 종료, 다음 스테이지 등)
+				/*if (지금이 6단계라면) {
+					노란 물약 가져오기
+				}*/
 				EndDialog(IDCANCEL); //디버깅 할때는 주석처리 해도 됨. 게임 이어가기 가능.
 			}
 		}
