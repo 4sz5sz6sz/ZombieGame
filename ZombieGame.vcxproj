@@ -212,7 +212,6 @@
     <ClCompile Include="CDoorMenuDialog.cpp" />
     <ClCompile Include="CEntity.cpp" />
     <ClCompile Include="CMachineDlg.cpp" />
-    <ClCompile Include="CManufacture.cpp" />
     <ClCompile Include="CMessageManager.cpp" />
     <ClCompile Include="CModalDlg.cpp" />
     <ClCompile Include="CPlayer.cpp" />
