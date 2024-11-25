@@ -33,4 +33,5 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedButtonMachineMove();
 	afx_msg void OnBnClickedButtonMake();
+	CStatic m_picEnd;
 };

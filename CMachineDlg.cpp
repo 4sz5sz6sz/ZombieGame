@@ -26,6 +26,7 @@ void CMachineDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_MACHINE_INVEN, m_listMachineInven);
 	DDX_Control(pDX, IDC_LIST_VACCINE_MACHINE, m_listVaccineMachine);
+	DDX_Control(pDX, IDC_PIC_End, m_picEnd);
 }
 
 
@@ -77,6 +78,13 @@ void CMachineDlg::PrintPicture_Good()
 void CMachineDlg::EndCheck()
 {
 	// TODO: 여기에 구현 코드 추가.
+
+	CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+	m_picEnd.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+	CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+	dc = m_picEnd.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+	CImage image;//불러오고 싶은 이미지를 로드할 CImage 
+
 	int count1 = m_listVaccineMachine.GetCount();
 	if (count1 == 4) {
 		CString n1, n2, n3, n4;
@@ -86,18 +94,31 @@ void CMachineDlg::EndCheck()
 		m_listVaccineMachine.GetText(3, n4);
 		if (n1 == _T("주황 물약") && n2 == _T("빨강 물약") && n3 == _T("파랑 물약") && n4 == _T("노랑 물약")) {
 			AfxMessageBox(_T("좀비 치료에 성공하였다."));
+			//PrintPicture_Good();
+			image.Load(_T("ending_happy.png"));//이미지 로드
+
+			image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+			ReleaseDC(dc);//DC 해제
 		}
 		else {
 			AfxMessageBox(_T("좀비 세상이다.."));
 			m_listVaccineMachine.ResetContent();
-			PrintPicture();
+			//PrintPicture();
+			image.Load(_T("ending_bad.png"));//이미지 로드
+
+			image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+			ReleaseDC(dc);//DC 해제
 		}
 	}
 	else{
 		AfxMessageBox(_T("좀비 세상이다.."));
 		m_listVaccineMachine.ResetContent();
+		//PrintPicture();
+		image.Load(_T("ending_bad.png"));//이미지 로드
+
+		image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+		ReleaseDC(dc);//DC 해제
 	}
-	PrintPicture_Good();
 }
 
 
