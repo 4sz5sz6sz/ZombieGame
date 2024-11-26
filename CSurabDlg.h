@@ -28,4 +28,6 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedCancel();
 	afx_msg void OnBnClickedButtonSurabMove();
+	CStatic m_picGetRed;
+	afx_msg void OnPaint();
 };
