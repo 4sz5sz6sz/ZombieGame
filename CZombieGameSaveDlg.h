@@ -38,4 +38,5 @@ public:
 	afx_msg void OnClickedButtonItemMove1();
 	afx_msg void OnBnClickedCancel();
 	CListBox m_listChestInven;
+	CStatic m_picGetBlue;
 };

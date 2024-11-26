@@ -36,6 +36,7 @@ void CZombieGameSaveDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_COMBO4, m_cbCombo4);
     DDX_Control(pDX, IDC_LIST_CHEST_INSIDE, m_listSaveInside);
     DDX_Control(pDX, IDC_LIST_CHEST_INVEN, m_listChestInven);
+    DDX_Control(pDX, IDC_PIC_GETBLUE, m_picGetBlue);
 }
 
 
@@ -69,12 +70,20 @@ void CZombieGameSaveDlg::OnClickedButtonOpen() // 다이얼 값이 맞는지 판
     n[1] = m_cbCombo2.GetCurSel();
     n[2] = m_cbCombo3.GetCurSel();
     n[3] = m_cbCombo4.GetCurSel();
-    if (n[0] == 2 && n[1] == 7 && n[2] == 9 && n[3] == 4) { // 다이얼 값이 맞는지 판별해주는 조건문
+    if (n[0] == 2 && n[1] == 7 && n[2] == 9 && n[3] == 6) { // 다이얼 값이 맞는지 판별해주는 조건문
         if (check == 0) {
             check++;
             MessageBox(_T("자물쇠가 풀렸다!"), _T("덜컥!"), MB_ICONINFORMATION);
             m_listSaveInside.AddString(_T("파란 물약"));
             ifok = false;
+            CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+            m_picGetBlue.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+            CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+            dc = m_picGetBlue.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+            CImage image;//불러오고 싶은 이미지를 로드할 CImage 
+            image.Load(_T("fakeblue.png"));//이미지 로드
+            image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+            ReleaseDC(dc);
         }
         else {
             MessageBox(_T("이미 상자는 열려있어..."), _T("저런!"), MB_ICONWARNING);
