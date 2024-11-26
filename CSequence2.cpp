@@ -1,20 +1,17 @@
 ﻿// CSequence2.cpp: 구현 파일
-//
 
 #include "pch.h"
 #include "ZombieGame.h"
 #include "afxdialogex.h"
 #include "CSequence2.h"
 
-
 // CSequence2 대화 상자
-
 IMPLEMENT_DYNAMIC(CSequence2, CDialogEx)
 
 CSequence2::CSequence2(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_SEQUENCE, pParent)
 {
-
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 CSequence2::~CSequence2()
@@ -25,10 +22,9 @@ void CSequence2::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_OUTPUT, m_listBox22);
-	DDX_Control(pDX, IDCANCEL, m_picture_control22);
 	DDX_Control(pDX, IDC_COMBO_AUTO, m_cbListItem22);
+	DDX_Control(pDX, IDC_PIC1, m_picture_control22);
 }
-
 
 BEGIN_MESSAGE_MAP(CSequence2, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CSequence2::OnBnClickedButtonDelete)
@@ -39,13 +35,11 @@ BEGIN_MESSAGE_MAP(CSequence2, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CSequence2::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
-
 // CSequence2 메시지 처리기
-
 
 void CSequence2::OnBnClickedButtonDelete()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	// ComboBox에서 선택된 항목을 삭제합니다.
 	int index = m_cbListItem22.GetCurSel();
 	if (index != CB_ERR) {
 		m_listBox22.DeleteString(index);
@@ -56,46 +50,41 @@ void CSequence2::OnBnClickedButtonDelete()
 	}
 }
 
-
 void CSequence2::OnRadioBlue()
 {
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	// 파랑 물약을 리스트에 추가하고, ComboBox를 갱신합니다.
 	m_listBox22.AddString(_T("파랑 물약"));
 	UpdateComboBox22();
 	CHECK();
 }
 
-
 void CSequence2::OnRadioOrange()
 {
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	// 주황 물약을 리스트에 추가하고, ComboBox를 갱신합니다.
 	m_listBox22.AddString(_T("주황 물약"));
 	UpdateComboBox22();
 	CHECK();
 }
 
-
 void CSequence2::OnRadioRed()
 {
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-	m_listBox22.AddString(_T("노랑 물약"));
-	UpdateComboBox22();
-	CHECK();
-}
-
-
-void CSequence2::OnRadioYellow()
-{
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	// 빨강 물약을 리스트에 추가하고, ComboBox를 갱신합니다.
 	m_listBox22.AddString(_T("빨강 물약"));
 	UpdateComboBox22();
 	CHECK();
 }
 
+void CSequence2::OnRadioYellow()
+{
+	// 노랑 물약을 리스트에 추가하고, ComboBox를 갱신합니다.
+	m_listBox22.AddString(_T("노랑 물약"));
+	UpdateComboBox22();
+	CHECK();
+}
 
 void CSequence2::CHECK()
 {
-	// TODO: 여기에 구현 코드 추가.
+	// 리스트가 4개 아이템을 가질 때 정답을 확인합니다.
 	int count = m_listBox22.GetCount();
 	if (count == 4) {
 		CString n1, n2, n3, n4;
@@ -117,31 +106,49 @@ void CSequence2::CHECK()
 	}
 }
 
-
 void CSequence2::UpdateComboBox22()
 {
-	// TODO: 여기에 구현 코드 추가.
+	// 리스트 박스의 항목을 ComboBox에 업데이트합니다.
 	int nCnt = m_listBox22.GetCount();
 	m_cbListItem22.ResetContent();
 
 	for (int i = 0; i < nCnt; i++) {
 		CString strItem;
-		strItem.Format(_T("리스트 함옥: %d"), i + 1);
+		strItem.Format(_T("리스트 항목: %d"), i + 1);
 		m_cbListItem22.AddString(strItem);
 	}
 }
 
-
 void CSequence2::OnBnClickedButton1()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CRect rect; // 픽쳐 컨트롤의 크기를 저장할 CRect 객체
-	m_picture_control22.GetWindowRect(rect); // GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
-	CDC* dc; // 픽쳐 컨트롤의 DC를 가져올 CDC 포인터
-	dc = m_picture_control22.GetDC(); // 픽쳐 컨트롤의 DC를 얻는다.
+	// 이미지 표시 버튼 클릭 시 픽처 컨트롤에 이미지를 표시합니다.
+	CRect rect2; // 픽처 컨트롤의 크기를 저장할 CRect 객체
+	m_picture_control22.GetWindowRect(rect2); // GetWindowRect를 사용해서 픽처 컨트롤의 크기를 받는다.
+	CDC* dc = m_picture_control22.GetDC(); // 픽처 컨트롤의 DC를 얻는다.
 	CImage image; // 불러오고 싶은 이미지를 로드할 CImage 
-	image.Load(_T("C:그림 주소")); // 원하는 이미지 경로로 변경
-
-	image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY); // 이미지를 픽쳐 컨트롤 크기로 조정
+	image.Load(_T("zombi_get_hint.png")); // 원하는 이미지 경로로 변경
+	image.StretchBlt(dc->m_hDC, 0, 0, rect2.Width(), rect2.Height(), SRCCOPY); // 이미지를 픽처 컨트롤 크기로 조정
 	ReleaseDC(dc); // DC 해제
+}
+
+BOOL CSequence2::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
+	CMenu* pSysMenu = GetSystemMenu(FALSE);
+	if (pSysMenu != nullptr) {
+		CString strAboutMenu;
+		strAboutMenu.LoadString(IDS_ABOUTBOX);
+		if (!strAboutMenu.IsEmpty()) {
+			pSysMenu->AppendMenu(MF_SEPARATOR);
+			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
+		}
+	}
+
+	// 이 대화 상자의 아이콘을 설정합니다.
+	SetIcon(m_hIcon, TRUE);  // 큰 아이콘을 설정합니다.
+	SetIcon(m_hIcon, FALSE); // 작은 아이콘을 설정합니다.
+
+	return TRUE;
 }
