@@ -54,4 +54,5 @@ public:
 	afx_msg void OnBnClickedButtonDrawer();
 	afx_msg void OnBnClickedButtonPhone();
 	afx_msg void OnBnClickedButton1();
+	CStatic m_picMainPicture;
 };

@@ -81,6 +81,9 @@
 #define IDC_LIST_SURABINVEN             1046
 #define IDC_BUTTON_SURAB_MOVE           1047
 #define IDC_LIST_SAVE_INVEN             1048
+#define IDC_PIC_GETORANGE               1049
+#define IDC_PIC_GETBLUE                 1050
+#define IDC_PIC_MAINPICTURE             1052
 #define IDC_STAGE_BUTTON1               1501
 #define IDC_STAGE_BUTTON2               1502
 #define IDC_STAGE_BUTTON3               1503
@@ -102,7 +105,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        153
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1049
+#define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

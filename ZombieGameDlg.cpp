@@ -63,12 +63,14 @@ CZombieGameDlg::CZombieGameDlg(CWnd* pParent /*=nullptr*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_bUnitViewed = false; // 금고 버튼 초기화
 	m_bChestButton = false; // 나무상자 버튼 초기화
+
 }
 
 void CZombieGameDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_INVEN, m_listInven);
+	DDX_Control(pDX, IDC_PIC_MAINPICTURE, m_picMainPicture);
 }
 //
 BEGIN_MESSAGE_MAP(CZombieGameDlg, CDialogEx)
@@ -161,6 +163,17 @@ void CZombieGameDlg::OnPaint()
 	{
 		CDialogEx::OnPaint();
 	}
+
+	// 메인 화면 사진 띄워주기
+	CRect rect;
+	m_picMainPicture.GetWindowRect(rect);
+	CDC* dc;
+	dc = m_picMainPicture.GetDC();
+	CImage image;
+	image.Load(_T("zombigame_dialog.png"));
+	image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);
+	ReleaseDC(dc);
+
 }
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
