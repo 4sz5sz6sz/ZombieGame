@@ -30,6 +30,7 @@ void CZombieGameChestDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_LIST_CHEST_INSIDE, m_listChestInside);
 	DDX_Control(pDX, IDC_LIST_SAVE_INVEN, m_listSaveInven);
+	DDX_Control(pDX, IDC_PIC_GETORANGE, m_picGetOrange);
 }
 
 
@@ -98,6 +99,15 @@ void CZombieGameChestDlg::OnClickedButtonCheck()
 			MessageBox(_T("금고 문이 열렸다!"), _T("덜컥!"), MB_ICONINFORMATION);
 			m_listChestInside.AddString(_T("주황 물약"));
 			ifokc = false;
+			CRect rect;
+			m_picGetOrange.GetWindowRect(rect);
+			CDC* dc;
+			dc = m_picGetOrange.GetDC();
+			CImage image;
+			image.Load(_T("medicine_orange.png"));
+			image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);
+			ReleaseDC(dc);
+
 		}
 		else {
 			MessageBox(_T("이미 금고 문은 열려있어..."), _T("저런!"), MB_ICONWARNING);

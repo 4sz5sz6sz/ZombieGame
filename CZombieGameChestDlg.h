@@ -38,4 +38,5 @@ public:
 	CListBox m_listSaveInven;
 	afx_msg void OnClickedButtonItmeMove2();
 	afx_msg void OnBnClickedCancel();
+	CStatic m_picGetOrange;
 };
