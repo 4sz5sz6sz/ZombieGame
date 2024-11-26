@@ -81,7 +81,7 @@ void CZombieGameSaveDlg::OnClickedButtonOpen() // 다이얼 값이 맞는지 판
             CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
             dc = m_picGetBlue.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
             CImage image;//불러오고 싶은 이미지를 로드할 CImage 
-            image.Load(_T("fakeblue.png"));//이미지 로드
+            image.Load(_T("blue.png"));//이미지 로드
             image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
             ReleaseDC(dc);
         }
