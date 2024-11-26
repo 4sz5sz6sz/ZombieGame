@@ -19,7 +19,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
-
+	HICON m_hIcon;
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButtonDelete();
@@ -29,9 +29,11 @@ public:
 	afx_msg void OnRadioYellow();
 	void CHECK();
 	CListBox m_listBox22;
-	CButton m_picture_control22;
+	//CButton m_picture_control22;
 	CComboBox m_cbListItem22;
 	void UpdateComboBox22();
 	afx_msg void OnBnClickedButton1();
+	virtual BOOL OnInitDialog();
+	CStatic m_picture_control22;
 };
 
