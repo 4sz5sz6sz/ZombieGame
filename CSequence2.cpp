@@ -126,7 +126,7 @@ void CSequence2::OnBnClickedButton1()
 	m_picture_control22.GetWindowRect(rect2); // GetWindowRect를 사용해서 픽처 컨트롤의 크기를 받는다.
 	CDC* dc = m_picture_control22.GetDC(); // 픽처 컨트롤의 DC를 얻는다.
 	CImage image; // 불러오고 싶은 이미지를 로드할 CImage 
-	image.Load(_T("ending_bad.png")); // 원하는 이미지 경로로 변경
+	image.Load(_T("zombi_get_hint.png")); // 원하는 이미지 경로로 변경
 	image.StretchBlt(dc->m_hDC, 0, 0, rect2.Width(), rect2.Height(), SRCCOPY); // 이미지를 픽처 컨트롤 크기로 조정
 	ReleaseDC(dc); // DC 해제
 }
