@@ -35,7 +35,6 @@ void CPlayer::TryToPlaceSafeZone(CArrowKeyGameDialog* pGameDialog, std::vector<C
 
     // 좀비가 없다면 안전지대 추가
     safeZones.push_back(newSafeZone);
-    //pGameDialog->Invalidate();  // 화면 갱신하여 새로운 안전지대 표시
 
     // 마지막 설치 시간 업데이트
     pGameDialog->isCooldownActive = true;
