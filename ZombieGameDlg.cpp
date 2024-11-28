@@ -196,7 +196,7 @@ void CZombieGameDlg::OnClickedButtonSafe()
 	if (pSave->DoModal() == IDCANCEL) {
 		for (int i = 0; i < 10; i++) {
 			m_strInven[i] = pSave->m_strInven[i];
-			if (m_strInven[i] == "파란 물약")
+			if (m_strInven[i] == "파랑 물약")
 				checkb++;
 			if (m_strInven[i].GetLength() >= 1) {
 				m_listInven.AddString(m_strInven[i]);
@@ -318,7 +318,7 @@ void CZombieGameDlg::OnBnClickedButtonDrawer()
 	if (pSurab->DoModal() == IDCANCEL) {
 		for (int i = 0; i < 10; i++) {
 			m_strInven[i] = pSurab->m_strSurabInven[i];
-			if (m_strInven[i] == "빨간 물약")
+			if (m_strInven[i] == "빨강 물약")
 				checkr++;
 			if (m_strInven[i].GetLength() >= 1) {
 				m_listInven.AddString(m_strInven[i]);
