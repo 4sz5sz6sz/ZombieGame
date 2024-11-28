@@ -87,6 +87,7 @@
 #define IDC_PIC_GETRED                  1054
 #define IDC_BUTTON_BACK                 1055
 #define IDC_BUTTON_RETURN               1056
+#define IDC_SCROLLBAR1                  1057
 #define IDC_STAGE_BUTTON1               1501
 #define IDC_STAGE_BUTTON2               1502
 #define IDC_STAGE_BUTTON3               1503
