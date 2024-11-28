@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CMachineDlg, CDialogEx)
 	ON_BN_CLICKED(IDCANCEL, &CMachineDlg::OnBnClickedCancel)
 	ON_BN_CLICKED(IDC_BUTTON_MACHINE_MOVE, &CMachineDlg::OnBnClickedButtonMachineMove)
 	ON_BN_CLICKED(IDC_BUTTON_MAKE, &CMachineDlg::OnBnClickedButtonMake)
+	ON_BN_CLICKED(IDC_BUTTON_RETURN, &CMachineDlg::OnClickedButtonReturn)
 END_MESSAGE_MAP()
 
 
@@ -124,11 +125,16 @@ void CMachineDlg::EndCheck()
 
 void CMachineDlg::OnBnClickedCancel()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	for (int i = 0; i < m_listMachineInven.GetCount(); i++) {
-		m_listMachineInven.GetText(i, m_strMachineInven[i]);
+	if (m_listVaccineMachine.GetCount()) {
+		MessageBox(_T("백신 제조 기계에 물약이 남아 있는거 같아."), _T("잠깐!"), MB_ICONWARNING);
 	}
-	CDialogEx::OnCancel();
+	else {
+		int i;
+		for (i = 0; i < m_listMachineInven.GetCount(); i++) {
+			m_listMachineInven.GetText(i, m_strMachineInven[i]);
+		}
+		CDialogEx::OnCancel();
+	}
 }
 
 
@@ -160,6 +166,16 @@ void CMachineDlg::OnBnClickedButtonMachineMove()
 	}
 }
 
+void CMachineDlg::OnClickedButtonReturn()
+{
+	CString str;
+	int leftIndex = m_listVaccineMachine.GetCurSel();
+	if (leftIndex != LB_ERR) {
+		m_listVaccineMachine.GetText(leftIndex, str);
+		m_listVaccineMachine.DeleteString(leftIndex);
+		m_listMachineInven.AddString(str);
+	}
+}
 
 void CMachineDlg::OnBnClickedButtonMake()
 {
