@@ -20,7 +20,7 @@ class CArrowKeyGameDialog : public CDialogEx
 	DECLARE_DYNAMIC(CArrowKeyGameDialog)
 
 public:
-	CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled=false, bool isSpeedBoostEnabled=false, CWnd* pParent = nullptr);   // 표준 생성자입니다.
+	CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled=false, bool isSpeedBoostEnabled=false, bool isZombieFlipEnabled=false, CWnd* pParent = nullptr);   // 표준 생성자입니다.
 	virtual ~CArrowKeyGameDialog();
 	//virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
@@ -112,4 +112,5 @@ public:
 	
 	bool isGodModeEnabled; // 치트: 무적 모드
 	bool isSpeedBoostEnabled; // 치트: 이동 속도 증가
+	bool isZombieFlipEnabled; // 치트: 좀비 이동 방향 반전 상태
 };

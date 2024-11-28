@@ -23,7 +23,7 @@ public:
         return false;
     }
 
-    void MoveTowards(double playerX, double playerY, const std::vector<CZombie>& zombies, const std::vector<CSafeZone>& safeZones) {
+    void MoveTowards(double playerX, double playerY, const std::vector<CZombie>& zombies, const std::vector<CSafeZone>& safeZones, bool isZombieFlipEnabled) {
         double dx = 0.0, dy = 0.0;
 
         if (rand() % 3 == 0) {
@@ -38,11 +38,11 @@ public:
         }
         else {
             // 플레이어 방향으로 이동
-            if (x < playerX) dx = zombieSpeed;
-            else if (x > playerX) dx = -zombieSpeed;
+            if ((x < playerX)^ isZombieFlipEnabled) dx = zombieSpeed;
+            else if ((x > playerX)^ isZombieFlipEnabled) dx = -zombieSpeed;
 
-            if (y < playerY) dy = zombieSpeed;
-            else if (y > playerY) dy = -zombieSpeed;
+            if ((y < playerY)^ isZombieFlipEnabled) dy = zombieSpeed;
+            else if ((y > playerY)^ isZombieFlipEnabled) dy = -zombieSpeed;
         }
 
         if (dx && dy) {

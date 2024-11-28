@@ -31,6 +31,8 @@ public:
 
 	bool isGodModeEnabled = false; // 치트: 무적 모드
 	bool isSpeedBoostEnabled = false; // 치트: 이동 속도 증가
+	bool isZombieFlipEnabled = false; // 치트: 좀비 이동 방향 반전 상태
 	afx_msg void OnBnClickedCheatCheckButton();// 치트키 확인 버튼 이벤트
 	afx_msg void OnPaint();
 };
+

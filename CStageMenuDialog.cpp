@@ -97,7 +97,7 @@ void CStageMenuDialog::OnBnClickedStartButton() {
         msg.Format(_T("스테이지 %d 시작!"), selectedStage);
         AfxMessageBox(msg);
         // 스테이지 시작 코드 작성
-        CArrowKeyGameDialog arrowKeyGameDialog(selectedStage,isGodModeEnabled, isSpeedBoostEnabled); //생성자에 스테이지 전달
+        CArrowKeyGameDialog arrowKeyGameDialog(selectedStage,isGodModeEnabled, isSpeedBoostEnabled, isZombieFlipEnabled); //생성자에 스테이지 전달
         arrowKeyGameDialog.DoModal();
         /*EndDialog(IDOK);*/
     }
@@ -140,6 +140,15 @@ void CStageMenuDialog::OnBnClickedCheatCheckButton()
         isSpeedBoostEnabled = true; // 이동 속도 증가
         AfxMessageBox(_T("치트: 이동 속도 증가!"));
     }
+    else if (cheatText.CompareNoCase(_T("ZOMBIEFLIP")) == 0) {
+        isZombieFlipEnabled = !isZombieFlipEnabled; // 좀비 이동 방향 반전 토글
+        if (isZombieFlipEnabled) {
+            AfxMessageBox(_T("치트: 좀비 이동 방향 반전!"));
+        }
+        else {
+            AfxMessageBox(_T("치트: 좀비 이동 방향 정상화!"));
+        }
+    }
     else {
         AfxMessageBox(_T("유효하지 않은 치트키입니다."));
     }
@@ -169,6 +178,14 @@ void CStageMenuDialog::OnPaint()
         CRect rect(10, 70, 200, 90); // 위치 조정
         dc.SetBkMode(TRANSPARENT);
         dc.SetTextColor(RGB(0, 0, 255));
+        dc.DrawText(cheatStatus, &rect, DT_LEFT | DT_SINGLELINE);
+    }
+
+    if (isZombieFlipEnabled) {
+        CString cheatStatus = _T("좀비 이동 방향 반전 활성화");
+        CRect rect(10, 90, 300, 110);
+        dc.SetBkMode(TRANSPARENT);
+        dc.SetTextColor(RGB(128, 0, 128)); // 보라색
         dc.DrawText(cheatStatus, &rect, DT_LEFT | DT_SINGLELINE);
     }
 }

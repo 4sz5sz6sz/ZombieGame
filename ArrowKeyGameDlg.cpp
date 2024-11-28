@@ -20,7 +20,7 @@
 
 IMPLEMENT_DYNAMIC(CArrowKeyGameDialog, CDialogEx)
 
-CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled, bool isSpeedBoostEnabled, CWnd* pParent /*=nullptr*/)
+CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled, bool isSpeedBoostEnabled, bool isZombieFlipEnabled, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ARROW_KEY_DIALOG, pParent),
 	player(0, 0),	//어차피 나중에 초기화함.
 	remainingCooldownTime(0),
@@ -32,6 +32,7 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled,
 {
 	this->isGodModeEnabled = isGodModeEnabled;
 	this->isSpeedBoostEnabled = isSpeedBoostEnabled;
+	this->isZombieFlipEnabled = isZombieFlipEnabled;
 	isGameOver = false;
 	squareSize = 20;         // 네모의 크기
 	m_ptLocation = (0, 0);
@@ -366,7 +367,7 @@ void CArrowKeyGameDialog::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == 1)  // 타이머 ID가 1인 경우, UpdateMovement() 호출
 	{
 		for (auto& zombie : zombies) {
-			zombie.MoveTowards(player.x, player.y,zombies,safeZones);
+			zombie.MoveTowards(player.x, player.y,zombies,safeZones, isZombieFlipEnabled);
 		}
 		UpdateMovement();	//위치 갱신
 		UpdatePlayerHP(); // 체력 갱신
