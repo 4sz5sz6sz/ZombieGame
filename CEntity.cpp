@@ -5,7 +5,7 @@
 bool CEntity::CheckCollision(double newX, double newY, const CEntity& other, double distance) const {
     // 두 CEntity 객체 간의 충돌 판정, 충돌이면 distance=1.0
     //충돌 판정 아니라, 거리 재는 용도면 distance 값을 조정 가능.
-    //ex. 노란 재료가 플레이어로부터 가까이 있는가?
+    //ex. 노랑 재료가 플레이어로부터 가까이 있는가?
     double dx = abs(newX - other.x);
     double dy = abs(newY - other.y);
     return (dx <= distance && dy <= distance);

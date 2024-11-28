@@ -85,6 +85,8 @@
 #define IDC_PIC_GETBLUE                 1050
 #define IDC_PIC_MAINPICTURE             1052
 #define IDC_PIC_GETRED                  1054
+#define IDC_CHEAT_EDIT                  1056
+#define IDC_CHEAT_CHECK_BUTTON          1057
 #define IDC_STAGE_BUTTON1               1501
 #define IDC_STAGE_BUTTON2               1502
 #define IDC_STAGE_BUTTON3               1503
@@ -106,7 +108,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        153
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1055
+#define _APS_NEXT_CONTROL_VALUE         1058
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -27,7 +27,10 @@ public:
 	void UpdatePreview();
 	
 	int selectedStage; // 선택한 스테이지 번호
-	// 각 스테이지 클리어 여부, 6단계까지만 저장.
-	//bool stageCleared[8];	
 	void UpdateButtonStates();
+
+	bool isGodModeEnabled = false; // 치트: 무적 모드
+	bool isSpeedBoostEnabled = false; // 치트: 이동 속도 증가
+	afx_msg void OnBnClickedCheatCheckButton();// 치트키 확인 버튼 이벤트
+	afx_msg void OnPaint();
 };

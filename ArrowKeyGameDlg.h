@@ -20,7 +20,7 @@ class CArrowKeyGameDialog : public CDialogEx
 	DECLARE_DYNAMIC(CArrowKeyGameDialog)
 
 public:
-	CArrowKeyGameDialog(int stageNumber, CWnd* pParent = nullptr);   // 표준 생성자입니다.
+	CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled=false, bool isSpeedBoostEnabled=false, CWnd* pParent = nullptr);   // 표준 생성자입니다.
 	virtual ~CArrowKeyGameDialog();
 	//virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
@@ -84,8 +84,9 @@ public:
 	CProgressCtrl cooldownProgressBar; // 쿨타임 프로그레스 바
 	double remainingCooldownTime; // 남은 쿨타임 시간 (초 단위)
 
-	std::vector<CYellowMaterial> yellowMaterials; // 노란 재료 벡터
-	int collectedYellowMaterialCount; // 획득한 노란 재료 갯수
+	std::vector<CYellowMaterial> yellowMaterials; // 
+	//노랑 재료 벡터
+	int collectedYellowMaterialCount; // 획득한 노랑 재료 갯수
 	void GenerateYellowMaterials(int count); // 노란재료 생성
 	void GenerateYellowMaterialAt(double x, double y); // 지정된 좌표에 노란재료 생성
 
@@ -108,4 +109,7 @@ public:
 	
 	// 안전지대 생성 (4단계)
 	std::vector<CSafeZone> GenerateSafeZones(int stageWidth, int stageHeight, int safeZoneHeight=10, int safeZoneSpacing=100, int safeZoneWidth=100, int columnSpacing=100, int columns=9);
+	
+	bool isGodModeEnabled; // 치트: 무적 모드
+	bool isSpeedBoostEnabled; // 치트: 이동 속도 증가
 };

@@ -20,7 +20,7 @@
 
 IMPLEMENT_DYNAMIC(CArrowKeyGameDialog, CDialogEx)
 
-CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullptr*/)
+CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled, bool isSpeedBoostEnabled, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ARROW_KEY_DIALOG, pParent),
 	player(0, 0),	//어차피 나중에 초기화함.
 	remainingCooldownTime(0),
@@ -30,6 +30,8 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullp
 	activeSafeZoneCount(0),
 	currentStage(stageNumber)
 {
+	this->isGodModeEnabled = isGodModeEnabled;
+	this->isSpeedBoostEnabled = isSpeedBoostEnabled;
 	isGameOver = false;
 	squareSize = 20;         // 네모의 크기
 	m_ptLocation = (0, 0);
@@ -43,6 +45,13 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, CWnd* pParent /*=nullp
 	requiredMaterialCount = 0;
 	stageHeight = 0;
 	stageWidth = 0;
+
+	// 치트 모드 적용
+	//isGodModeEnabled는 이미 업데이트 됨.
+	if (isSpeedBoostEnabled) {
+		moveSpeed = 0.8; // 기본 속도보다 증가
+	}
+
 	//UINT_PTR m_nTimerID;
 
 }
@@ -84,7 +93,7 @@ void CArrowKeyGameDialog::OnPaint()
 				static_cast<int>(material.y * SCALE_FACTOR),
 				SCALE_FACTOR,
 				SCALE_FACTOR,
-				RGB(255, 255, 0)); //노란색 네모 그리기
+				RGB(255, 255, 0)); //노랑색 네모 그리기
 		}
 	}
 	
@@ -467,7 +476,7 @@ void CArrowKeyGameDialog::CheckPlayerOnSafeZones()
 
 
 
-// 노란재료 생성
+// 노랑재료 생성
 void CArrowKeyGameDialog::GenerateYellowMaterials(int count)
 {
 	// TODO: 여기에 구현 코드 추가.
@@ -506,7 +515,7 @@ void CArrowKeyGameDialog::GenerateYellowMaterials(int count)
 			bool inSafeZone = false;
 			for (auto& zone : safeZones) {
 				//정적 메소드 처럼 그냥 player의 멤버함수를 호출함. 
-				//실제로는 노란재료-안전지대 간의 위치관계 검사. 
+				//실제로는 노랑재료-안전지대 간의 위치관계 검사. 
 				//player의 위치정보와는 무관함.
 				if (player.CheckCollision(x, y, zone.rect)) {
 					inSafeZone = true;
@@ -553,12 +562,12 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 					if (pParent) {
 						CZombieGameDlg* pMainDlg = dynamic_cast<CZombieGameDlg*>(pParent->GetParent());
 						if (pMainDlg) {
-							pMainDlg->m_listInven.AddString(_T("노란 물약")); // 노란 물약 추가
+							pMainDlg->m_listInven.AddString(_T("노랑 물약")); // 노랑 물약 추가
 						}
 					}
 
 					CString msg;
-					msg.Format(_T("6단계를 클리어하여 노란 물약을 획득했습니다!"));
+					msg.Format(_T("6단계를 클리어하여 노랑 물약을 획득했습니다!"));
 					AfxMessageBox(msg);
 				}
 
@@ -586,8 +595,8 @@ void CArrowKeyGameDialog::UpdatePlayerHP()
 		}
 	}
 
-	//충돌 여부에 따라 체력 조정
-	if (isCollision) {
+	//무적 모드+충돌 여부에 따라 체력 조정,
+	if (!isGodModeEnabled && isCollision) {
 		player.TakeDamage(); //충돌 시 체력 5 감소
 	}
 	else {
@@ -613,7 +622,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 	// 기존 데이터 초기화
 	safeZones.clear();         // 기존 안전지대 초기화
 	zombies.clear();           // 기존 좀비 초기화
-	yellowMaterials.clear();   // 기존 노란재료 초기화
+	yellowMaterials.clear();   // 기존 노랑재료 초기화
 	collectedYellowMaterialCount = 0; // 현재까지 수집한 재료 수 초기화
 
 	isCooldownActive = false;  // 쿨타임 비활성화
@@ -642,7 +651,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(-50, -50, 5));
 		zombies.push_back(CZombie(200, 200, 6));
 		zombies.push_back(CZombie(40, 40, 7,0.3));
-		GenerateYellowMaterials(10);           // 노란재료 10개 생성
+		GenerateYellowMaterials(10);           // 노랑재료 10개 생성
 		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	case 2:
@@ -665,7 +674,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(10, 15, 3));
 		zombies.push_back(CZombie(20, 25, 4)); // 추가 좀비
 
-		// 노란재료
+		// 노랑재료
 		GenerateYellowMaterials(14);
 		GenerateYellowMaterialAt(87.0,1.0);
 		requiredMaterialCount = 15;				// 목표 재료 수
@@ -683,7 +692,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(12, 10, 1));
 		zombies.push_back(CZombie(15, 10, 2));
 		zombies.push_back(CZombie(10, 15, 3));
-		GenerateYellowMaterials(10);           // 노란재료 10개 생성
+		GenerateYellowMaterials(10);           // 노랑재료 10개 생성
 		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	case 4:
@@ -732,7 +741,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 
 		
 		
-		GenerateYellowMaterials(30);           // 노란재료 10개 생성
+		GenerateYellowMaterials(30);           // 노랑재료 10개 생성
 		requiredMaterialCount = 30;				// 목표 재료 수
 		break;
 	case 5:
@@ -775,7 +784,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(-300, -2, 17));
 		zombies.push_back(CZombie(-100, -30, 18));
 
-		GenerateYellowMaterials(30);           // 노란재료 10개 생성
+		GenerateYellowMaterials(30);           // 노랑재료 10개 생성
 		requiredMaterialCount = 30;				// 목표 재료 수
 		break;
 	case 6:
@@ -791,7 +800,7 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		zombies.push_back(CZombie(12, 10, 1));
 		zombies.push_back(CZombie(15, 10, 2));
 		zombies.push_back(CZombie(10, 15, 3));
-		GenerateYellowMaterials(7);           // 노란재료 7개 생성
+		GenerateYellowMaterials(7);           // 노랑재료 7개 생성
 		//가장자리에 3개 생성
 		GenerateYellowMaterialAt(76.0, 1.0);
 		GenerateYellowMaterialAt(75.6, 44.0);
