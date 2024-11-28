@@ -35,6 +35,7 @@ BEGIN_MESSAGE_MAP(CStageMenuDialog, CDialogEx)
     ON_BN_CLICKED(IDC_NEW_STAGE_BUTTON5, &CStageMenuDialog::OnBnClickedStageButton)
     ON_BN_CLICKED(IDC_NEW_STAGE_BUTTON6, &CStageMenuDialog::OnBnClickedStageButton)
     ON_BN_CLICKED(IDC_NEW_START_BUTTON, &CStageMenuDialog::OnBnClickedStartButton)
+    ON_BN_CLICKED(IDC_BUTTON2, &CStageMenuDialog::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -112,4 +113,10 @@ void CStageMenuDialog::UpdateButtonStates()
     //
 
 
+}
+
+
+void CStageMenuDialog::OnBnClickedButton2()
+{
+    // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
