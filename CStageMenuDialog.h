@@ -33,5 +33,4 @@ public:
 	bool isSpeedBoostEnabled = false; // 치트: 이동 속도 증가
 	afx_msg void OnBnClickedCheatCheckButton();// 치트키 확인 버튼 이벤트
 	afx_msg void OnPaint();
-	afx_msg void OnBnClickedButton2();
 };

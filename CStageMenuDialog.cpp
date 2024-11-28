@@ -37,7 +37,6 @@ BEGIN_MESSAGE_MAP(CStageMenuDialog, CDialogEx)
     ON_BN_CLICKED(IDC_NEW_START_BUTTON, &CStageMenuDialog::OnBnClickedStartButton)
     ON_BN_CLICKED(IDC_CHEAT_CHECK_BUTTON, &CStageMenuDialog::OnBnClickedCheatCheckButton)
     ON_WM_PAINT()
-    ON_BN_CLICKED(IDC_BUTTON2, &CStageMenuDialog::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -172,10 +171,4 @@ void CStageMenuDialog::OnPaint()
         dc.SetTextColor(RGB(0, 0, 255));
         dc.DrawText(cheatStatus, &rect, DT_LEFT | DT_SINGLELINE);
     }
-}
-
-
-void CStageMenuDialog::OnBnClickedButton2()
-{
-    // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
