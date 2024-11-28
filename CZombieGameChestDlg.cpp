@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CZombieGameChestDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_CLEAR, &CZombieGameChestDlg::OnClickedButtonClear)
 	ON_BN_CLICKED(IDC_BUTTON_ITME_MOVE2, &CZombieGameChestDlg::OnClickedButtonItmeMove2)
 	ON_BN_CLICKED(IDCANCEL, &CZombieGameChestDlg::OnBnClickedCancel)
+	ON_BN_CLICKED(IDC_BUTTON_BACK, &CZombieGameChestDlg::OnClickedButtonBack)
 END_MESSAGE_MAP()
 
 
@@ -191,4 +192,11 @@ BOOL CZombieGameChestDlg::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
+
+
+void CZombieGameChestDlg::OnClickedButtonBack()
+{
+	int nCount = m_listAnswer.GetCount();
+		m_listAnswer.DeleteString(nCount-1);
 }

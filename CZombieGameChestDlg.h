@@ -39,4 +39,5 @@ public:
 	afx_msg void OnClickedButtonItmeMove2();
 	afx_msg void OnBnClickedCancel();
 	CStatic m_picGetOrange;
+	afx_msg void OnClickedButtonBack();
 };
