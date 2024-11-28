@@ -30,4 +30,5 @@ public:
 	// 각 스테이지 클리어 여부, 6단계까지만 저장.
 	//bool stageCleared[8];	
 	void UpdateButtonStates();
+	afx_msg void OnBnClickedButton2();
 };
