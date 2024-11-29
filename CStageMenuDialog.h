@@ -37,5 +37,14 @@ public:
 	afx_msg void OnBnClickedCheatCheckButton();// 치트키 확인 버튼 이벤트
 	afx_msg void OnPaint();
 	
+	virtual BOOL OnInitDialog();
+	afx_msg void OnDestroy();
+	
+
+	CStatic m_PreviewImage; // 픽처 컨트롤 멤버 변수
+	CString m_currentImagePath; // 현재 표시 중인 이미지 경로
+	
+	HBITMAP m_hBitmap; // 로드한 비트맵 핸들
+
 };
 

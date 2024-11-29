@@ -6,13 +6,12 @@
 #include "afxdialogex.h"
 #include "CStageMenuDialog.h"
 
-
 // CStageMenuDialog 대화 상자
 
 IMPLEMENT_DYNAMIC(CStageMenuDialog, CDialogEx)
 
 CStageMenuDialog::CStageMenuDialog(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_STAGE_MENU_DIALOG, pParent)
+	: CDialogEx(IDD_STAGE_MENU_DIALOG, pParent), m_hBitmap(NULL)
 {
     selectedStage = 0;
 }
@@ -23,7 +22,8 @@ CStageMenuDialog::~CStageMenuDialog()
 
 void CStageMenuDialog::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+    CDialogEx::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_STAGE_PREVIEW, m_PreviewImage);
 }
 
 
@@ -37,64 +37,96 @@ BEGIN_MESSAGE_MAP(CStageMenuDialog, CDialogEx)
     ON_BN_CLICKED(IDC_NEW_START_BUTTON, &CStageMenuDialog::OnBnClickedStartButton)
     ON_BN_CLICKED(IDC_CHEAT_CHECK_BUTTON, &CStageMenuDialog::OnBnClickedCheatCheckButton)
     ON_WM_PAINT()
+    ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
 // CStageMenuDialog 메시지 처리기
 
 void CStageMenuDialog::OnBnClickedStageButton() {
+
     // 스테이지 선택 로직
     CWnd* pWnd = GetFocus(); // 클릭된 컨트롤 가져오기
     if (pWnd) {
         UINT nID = pWnd->GetDlgCtrlID(); // 컨트롤 ID 가져오기
+        CString imagePath;
+
         switch (nID)
         {
         case IDC_NEW_STAGE_BUTTON1:
             selectedStage = 1;
+            imagePath = _T("images/stage1.bmp");
             isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON2:
             selectedStage = 2;
+            imagePath = _T("images/stage2.bmp");
             isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON3:
             selectedStage = 3;
+            imagePath = _T("images/stage3.bmp");
             isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON4:
             selectedStage = 4;
+            imagePath = _T("images/stage4.bmp");
             isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON5:
             selectedStage = 5;
+            imagePath = _T("images/stage5.bmp");
             isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON6:
             selectedStage = 6;
+            imagePath = _T("images/stage6.bmp");
             isDarknessEnabled = true;   //어둠 추가
             break;
         default:
             return; // 알 수 없는 버튼
         }
 
+        // 이미지 경로 저장 및 다시 그리기 요청
+        m_currentImagePath = imagePath;
+
+        // 기존 비트맵 삭제
+        if (m_hBitmap) {
+            ::DeleteObject(m_hBitmap);
+            m_hBitmap = NULL;
+        }
+
+        // 이미지 로드
+        m_hBitmap = (HBITMAP)::LoadImage(
+            NULL,
+            imagePath,
+            IMAGE_BITMAP,
+            0, 0,
+            LR_LOADFROMFILE | LR_CREATEDIBSECTION
+        );
+
+        if (m_hBitmap) {
+            m_PreviewImage.SetBitmap(m_hBitmap);
+        }
+        else {
+            AfxMessageBox(_T("이미지를 로드할 수 없습니다!"));
+        }
+
+
+        Invalidate(); // 화면 갱신
     }
-    /*CString msg;
-    msg.Format(_T("Stage %d 시작!"), selectedStage);
-    AfxMessageBox(msg);*/
+
+   
     UpdatePreview(); // 선택된 스테이지에 맞는 미리보기 표시
     UpdateButtonStates(); //시작 버튼 상태 갱신
-    // 시작 버튼 활성화
-    /*CButton* startButton = (CButton*)GetDlgItem(IDC_NEW_START_BUTTON);
-    startButton->EnableWindow(TRUE);*/
 }
 
 void CStageMenuDialog::UpdatePreview() {
     // 선택된 스테이지에 따른 미리보기 내용 변경
-    CStatic* preview = (CStatic*)GetDlgItem(IDC_NEW_STAGE_PREVIEW);
+    CStatic* previewTextCtrl = (CStatic*)GetDlgItem(IDC_NEW_STAGE_PREVIEW);
     CString previewText;    
     previewText.Format(_T("스테이지 %d 미리보기"), selectedStage);
-    //OutputDebugString(_T("미리보기 텍스트 설정 성공\n"));
-    preview->SetWindowText(previewText);
+    previewTextCtrl->SetWindowText(previewText);
 }
 
 void CStageMenuDialog::OnBnClickedStartButton() {
@@ -163,8 +195,7 @@ void CStageMenuDialog::OnBnClickedCheatCheckButton()
 void CStageMenuDialog::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-    // TODO: 여기에 메시지 처리기 코드를 추가합니다.
-    // 그리기 메시지에 대해서는 CDialogEx::OnPaint()을(를) 호출하지 마십시오.
+
     if (isGodModeEnabled) {
         CString cheatStatus = _T("무적 모드 활성화");
         CRect rect(10, 50, 200, 70); // 위치 조정
@@ -189,3 +220,33 @@ void CStageMenuDialog::OnPaint()
         dc.DrawText(cheatStatus, &rect, DT_LEFT | DT_SINGLELINE);
     }
 }
+
+BOOL CStageMenuDialog::OnInitDialog()
+{
+    CDialogEx::OnInitDialog();
+
+    // TODO:  여기에 추가 초기화 작업을 추가합니다.
+
+    // 픽처 컨트롤에 SS_BITMAP 스타일 설정
+    CStatic* previewCtrl = (CStatic*)GetDlgItem(IDC_STAGE_PREVIEW);
+    if (previewCtrl) {
+        previewCtrl->ModifyStyle(0, SS_BITMAP, 0);
+    }
+
+ 
+    return TRUE;  // return TRUE unless you set the focus to a control
+    // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
+
+
+void CStageMenuDialog::OnDestroy()
+{
+    CDialogEx::OnDestroy();
+
+    // 로드한 비트맵 해제
+    if (m_hBitmap) {
+        ::DeleteObject(m_hBitmap);
+        m_hBitmap = NULL;
+    }
+}
+

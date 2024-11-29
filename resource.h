@@ -88,6 +88,7 @@
 #define IDC_BUTTON_BACK                 1055
 #define IDC_BUTTON_RETURN               1056
 #define IDC_SCROLLBAR1                  1057
+#define IDC_STAGE_PREVIEW               1058
 #define IDC_STAGE_BUTTON1               1501
 #define IDC_STAGE_BUTTON2               1502
 #define IDC_STAGE_BUTTON3               1503
@@ -111,7 +112,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        153
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1058
+#define _APS_NEXT_CONTROL_VALUE         1059
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
