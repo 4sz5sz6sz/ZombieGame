@@ -1,6 +1,4 @@
 ﻿// ArrowKeyGameDlg.cpp: 구현 파일
-//
-//OutputDebugString(_T("테스트내용\n"));
 
 #include "pch.h"
 #include "ZombieGame.h"
@@ -20,7 +18,7 @@
 
 IMPLEMENT_DYNAMIC(CArrowKeyGameDialog, CDialogEx)
 
-CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled, bool isSpeedBoostEnabled, bool isZombieFlipEnabled, CWnd* pParent /*=nullptr*/)
+CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled, bool isSpeedBoostEnabled, bool isZombieFlipEnabled, bool isDarknessEnabled, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ARROW_KEY_DIALOG, pParent),
 	player(0, 0),	//어차피 나중에 초기화함.
 	remainingCooldownTime(0),
@@ -33,6 +31,7 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled,
 	this->isGodModeEnabled = isGodModeEnabled;
 	this->isSpeedBoostEnabled = isSpeedBoostEnabled;
 	this->isZombieFlipEnabled = isZombieFlipEnabled;
+	this->isDarknessEnabled = isDarknessEnabled;
 	isGameOver = false;
 	squareSize = 20;         // 네모의 크기
 	m_ptLocation = (0, 0);
@@ -52,6 +51,13 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled,
 	if (isSpeedBoostEnabled) {
 		moveSpeed = 0.8; // 기본 속도보다 증가
 	}
+
+	// "어둠" 설정 관련 초기화.
+	srand((unsigned int)time(NULL));
+	isLightOn = true; // 시작 시 시야 ON
+	lightStartTime = std::chrono::steady_clock::now();
+	currentLightningDuration = GenerateRandomTime(0.5, 1.5);
+	currentDarkDuration = GenerateRandomTime(2.0, 5.0);
 
 	//UINT_PTR m_nTimerID;
 
@@ -87,8 +93,8 @@ void CArrowKeyGameDialog::OnPaint()
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 	// 그리기 메시지에 대해서는 CDialogEx::OnPaint()을(를) 호출하지 마십시오.
 
-	// 스테이지 6이고 시야가 꺼진 상태일 때 화면을 어둡게
-	if (currentStage == 6 && !isLightOn) {
+	// 시야가 꺼진 상태일 때 화면을 어둡게
+	if (!isLightOn) {
 		CBrush darkBrush(RGB(10, 10, 10)); // 어두운 화면 색상
 		CRect rect;
 		GetClientRect(&rect); // 전체 화면 크기 가져오기
@@ -125,8 +131,8 @@ void CArrowKeyGameDialog::DrawZombies(CPaintDC& dc)
 
 
 	for (auto& zombie : zombies) {
-		// 스테이지 6에서 불이 꺼져 있을 때만 거리 제한 적용
-		if (currentStage == 6 && !isLightOn) {
+		// 불이 꺼져 있을 때만 거리 제한 적용
+		if (!isLightOn) {
 			if (!player.CheckCollision(player.x, player.y, zombie, detectionRange)) {
 				continue; // 거리가 멀면 출력하지 않음
 			}
@@ -388,7 +394,6 @@ int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	cooldownProgressBar.SetPos(0);  // 초기값 설정
 	//cooldownProgressBar.SendMessage(PBM_SETBARCOLOR, 0, RGB(255, 0, 0)); // 빨간색 설정했는데... 안 먹힘..
 
-	
 	SetTimer(1, 30, NULL);	//30ms에 한번 업데이트.//16으로 설정하면 60fps
 
 	return 0;
@@ -414,7 +419,7 @@ void CArrowKeyGameDialog::OnTimer(UINT_PTR nIDEvent)
 		auto now = std::chrono::steady_clock::now();
 		std::chrono::duration<double> elapsed = now - lightStartTime;
 
-		if (currentStage == 6) {
+		if (isDarknessEnabled) {	//6단계 이거나, 치트가 적용되었으면 true
 			// 6단계에서만 번개 효과 적용
 			if (isLightOn) {
 				// 번개 효과: ON 상태에서 지속 시간 체크
@@ -437,20 +442,6 @@ void CArrowKeyGameDialog::OnTimer(UINT_PTR nIDEvent)
 			// 다른 스테이지에서는 항상 시야 ON
 			isLightOn = true;
 		}
-
-		//if (currentStage == 6) {
-		//	// 스테이지 6인 경우 시야 전환
-		//	std::chrono::duration<double> elapsed = now - lightStartTime;
-		//	if (elapsed.count() >= 3.0) {
-		//		isLightOn = !isLightOn; // 상태 전환
-		//		lightStartTime = now;  // 타이머 리셋
-		//	}
-		//}
-		//else {
-		//	isLightOn = true; // 다른 스테이지에서는 항상 시야 ON
-		//}
-
-
 
 		for (auto& zombie : zombies) {
 			zombie.MoveTowards(player.x, player.y,zombies,safeZones, isZombieFlipEnabled);
@@ -800,11 +791,6 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		safeZones.push_back(CRect(800, 200, 1500, 220));
 		safeZones.push_back(CRect(100, 100, 130, 800));*/
 
-		
-		
-		
-	
-		
 		activeSafeZoneCount = (int)safeZones.size();
 
 		zombies.push_back(CZombie(12, 10, 1,0.3));
@@ -878,25 +864,28 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		// Stage 6 설정
 		player.x = 7;
 		player.y = 7;
-		stageWidth = 1600;
-		stageHeight = 1000;
+		stageWidth = 800;
+		stageHeight = 600;
+
 		safeZones.push_back(CRect(100, 100, 200, 200));
 		safeZones.push_back(CRect(300, 300, 400, 400));
-		//safeZones.push_back(CRect(500, 600, 700, 800));
 		activeSafeZoneCount = (int)safeZones.size();
-		zombies.push_back(CZombie(40, 20, 1,0.5));
-		zombies.push_back(CZombie(12, 20, 2,0.4));
-		zombies.push_back(CZombie(30, 30, 3,0.5));
-		zombies.push_back(CZombie(40, 40, 4,0.4));
-		zombies.push_back(CZombie(70, 10, 5,0.4));
+
+		zombies.push_back(CZombie(40, 20, 1,0.6));
+		zombies.push_back(CZombie(12, 20, 2,0.5));
+		zombies.push_back(CZombie(30, 30, 3,0.6));
+		zombies.push_back(CZombie(40, 40, 4,0.5));
+		zombies.push_back(CZombie(70, 10, 5,0.5));
 		
 		
-		GenerateYellowMaterials(27);           // 노랑재료 7개 생성
+		GenerateYellowMaterials(10);           // 노랑재료 30개 생성
 		//가장자리에 3개 생성
-		GenerateYellowMaterialAt(76.0, 1.0);
+		/*GenerateYellowMaterialAt(76.0, 1.0);
 		GenerateYellowMaterialAt(75.6, 44.0);
 		GenerateYellowMaterialAt(2.0, 45.0);
-		requiredMaterialCount = 30;				// 목표 재료 수
+		1600*1200 기준
+		*/
+		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	}
 	
@@ -928,14 +917,7 @@ BOOL CArrowKeyGameDialog::OnInitDialog()
 
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
 	InitializeStage(currentStage);	//각 스테이지 별 환경 설정. //GetClientRect(&clientRect); 때문에 위치변.
-
-	isLightOn = true; // 시작 시 시야 ON
-	lightStartTime = std::chrono::steady_clock::now();
-	currentLightningDuration = GenerateRandomTime(0.5, 1.5);
-	currentDarkDuration = GenerateRandomTime(2.0, 5.0);
 	MoveWindow(0, 0, stageWidth, stageHeight);
-
-	srand((unsigned int)time(NULL));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.

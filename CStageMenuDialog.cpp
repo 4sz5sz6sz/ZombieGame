@@ -51,21 +51,27 @@ void CStageMenuDialog::OnBnClickedStageButton() {
         {
         case IDC_NEW_STAGE_BUTTON1:
             selectedStage = 1;
+            isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON2:
             selectedStage = 2;
+            isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON3:
             selectedStage = 3;
+            isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON4:
             selectedStage = 4;
+            isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON5:
             selectedStage = 5;
+            isDarknessEnabled = false;
             break;
         case IDC_NEW_STAGE_BUTTON6:
             selectedStage = 6;
+            isDarknessEnabled = true;   //어둠 추가
             break;
         default:
             return; // 알 수 없는 버튼
@@ -97,7 +103,7 @@ void CStageMenuDialog::OnBnClickedStartButton() {
         msg.Format(_T("스테이지 %d 시작!"), selectedStage);
         AfxMessageBox(msg);
         // 스테이지 시작 코드 작성
-        CArrowKeyGameDialog arrowKeyGameDialog(selectedStage,isGodModeEnabled, isSpeedBoostEnabled, isZombieFlipEnabled); //생성자에 스테이지 전달
+        CArrowKeyGameDialog arrowKeyGameDialog(selectedStage,isGodModeEnabled, isSpeedBoostEnabled, isZombieFlipEnabled, isDarknessEnabled); //생성자에 스테이지 전달
         arrowKeyGameDialog.DoModal();
         /*EndDialog(IDOK);*/
     }
@@ -108,12 +114,6 @@ void CStageMenuDialog::UpdateButtonStates()
     // TODO: 여기에 구현 코드 추가.
     CButton* pStartButton = (CButton*)GetDlgItem(IDC_NEW_START_BUTTON);
     pStartButton->EnableWindow(selectedStage >= 1 && stageCleared[selectedStage]);
-    // 밑에 3줄??
-    //
-    //
-    //
-
-
 }
 
 // 치트키 확인 버튼 이벤트
