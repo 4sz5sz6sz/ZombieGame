@@ -120,4 +120,7 @@ public:
 	
 	bool isLightOn; // 현재 시야 상태 (true: 시야 ON, false: 어둠 상태)
 	std::chrono::steady_clock::time_point lightStartTime; // 시야 전환 시간
+	double GenerateRandomTime(double minTime, double maxTime); // 일정 범위 내의 실수값 출력.
+	double currentLightningDuration; // 불빛 지속 시간
+	double currentDarkDuration; // 어둠 지속 시간
 };

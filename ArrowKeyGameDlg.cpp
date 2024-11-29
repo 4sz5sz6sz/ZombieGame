@@ -98,8 +98,9 @@ void CArrowKeyGameDialog::OnPaint()
 		// 시야가 켜져 있는 상태거나 다른 스테이지일 경우
 		DrawYellowMaterials(dc); // 노란색 네모(노랑 재료) 그리기
 		DrawSafeZones(dc);       // 초록색 네모(안전 지대) 그리기
-		DrawZombies(dc);         // 빨간색 네모 (Zombie) 그리기
 	}
+
+	DrawZombies(dc);         // 빨간색 네모 (Zombie) 그리기
 	
 
 	//DrawYellowMaterials(dc); //노란색 네모(노랑 재료) 그리기
@@ -120,7 +121,17 @@ void CArrowKeyGameDialog::OnPaint()
 //빨간색 네모 (Zombie) 그리기
 void CArrowKeyGameDialog::DrawZombies(CPaintDC& dc)
 {
+	const double detectionRange = 10.0; // 플레이어와 좀비 간 출력 거리
+
+
 	for (auto& zombie : zombies) {
+		// 스테이지 6에서 불이 꺼져 있을 때만 거리 제한 적용
+		if (currentStage == 6 && !isLightOn) {
+			if (!player.CheckCollision(player.x, player.y, zombie, detectionRange)) {
+				continue; // 거리가 멀면 출력하지 않음
+			}
+		}
+
 		dc.FillSolidRect(static_cast<int>(zombie.x * SCALE_FACTOR),
 			static_cast<int>(zombie.y * SCALE_FACTOR),
 			SCALE_FACTOR,
@@ -400,20 +411,44 @@ void CArrowKeyGameDialog::OnTimer(UINT_PTR nIDEvent)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	if (nIDEvent == 1)  // 타이머 ID가 1인 경우, UpdateMovement() 호출
 	{
-
 		auto now = std::chrono::steady_clock::now();
+		std::chrono::duration<double> elapsed = now - lightStartTime;
 
 		if (currentStage == 6) {
-			// 스테이지 6인 경우 시야 전환
-			std::chrono::duration<double> elapsed = now - lightStartTime;
-			if (elapsed.count() >= 3.0) {
-				isLightOn = !isLightOn; // 상태 전환
-				lightStartTime = now;  // 타이머 리셋
+			// 6단계에서만 번개 효과 적용
+			if (isLightOn) {
+				// 번개 효과: ON 상태에서 지속 시간 체크
+				if (elapsed.count() >= currentLightningDuration) {
+					isLightOn = false; // OFF 상태로 전환
+					lightStartTime = now;
+					currentDarkDuration = GenerateRandomTime(2.0, 5.0); // 어두운 시간 랜덤 생성
+				}
+			}
+			else {
+				// 어두운 상태에서 번개 발생 체크
+				if (elapsed.count() >= currentDarkDuration) {
+					isLightOn = true; // ON 상태로 전환
+					lightStartTime = now;
+					currentLightningDuration = GenerateRandomTime(0.5, 1.5); // 번개 지속 시간 랜덤 생성
+				}
 			}
 		}
 		else {
-			isLightOn = true; // 다른 스테이지에서는 항상 시야 ON
+			// 다른 스테이지에서는 항상 시야 ON
+			isLightOn = true;
 		}
+
+		//if (currentStage == 6) {
+		//	// 스테이지 6인 경우 시야 전환
+		//	std::chrono::duration<double> elapsed = now - lightStartTime;
+		//	if (elapsed.count() >= 3.0) {
+		//		isLightOn = !isLightOn; // 상태 전환
+		//		lightStartTime = now;  // 타이머 리셋
+		//	}
+		//}
+		//else {
+		//	isLightOn = true; // 다른 스테이지에서는 항상 시야 ON
+		//}
 
 
 
@@ -849,11 +884,11 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		safeZones.push_back(CRect(300, 300, 400, 400));
 		//safeZones.push_back(CRect(500, 600, 700, 800));
 		activeSafeZoneCount = (int)safeZones.size();
-		zombies.push_back(CZombie(40, 20, 1,0.1));
-		zombies.push_back(CZombie(12, 20, 2,0.1));
-		zombies.push_back(CZombie(30, 30, 3,0.1));
-		zombies.push_back(CZombie(40, 40, 4,0.1));
-		zombies.push_back(CZombie(70, 10, 5,0.1));
+		zombies.push_back(CZombie(40, 20, 1,0.5));
+		zombies.push_back(CZombie(12, 20, 2,0.4));
+		zombies.push_back(CZombie(30, 30, 3,0.5));
+		zombies.push_back(CZombie(40, 40, 4,0.4));
+		zombies.push_back(CZombie(70, 10, 5,0.4));
 		
 		
 		GenerateYellowMaterials(27);           // 노랑재료 7개 생성
@@ -893,9 +928,14 @@ BOOL CArrowKeyGameDialog::OnInitDialog()
 
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
 	InitializeStage(currentStage);	//각 스테이지 별 환경 설정. //GetClientRect(&clientRect); 때문에 위치변.
+
 	isLightOn = true; // 시작 시 시야 ON
 	lightStartTime = std::chrono::steady_clock::now();
+	currentLightningDuration = GenerateRandomTime(0.5, 1.5);
+	currentDarkDuration = GenerateRandomTime(2.0, 5.0);
 	MoveWindow(0, 0, stageWidth, stageHeight);
+
+	srand((unsigned int)time(NULL));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
@@ -963,4 +1003,14 @@ std::vector<CSafeZone> CArrowKeyGameDialog::GenerateSafeZones(int stageWidth, in
 	}
 
 	return safeZones; // 생성된 안전지대 반환
+}
+
+
+// 일정 범위 내의 실수값 출력. func(0,2, 2.5) 호출하면, 0,2, 2.5사이의 숫자 리턴.
+double CArrowKeyGameDialog::GenerateRandomTime(double minTime, double maxTime)
+{
+	// TODO: 여기에 구현 코드 추가.
+	int range = static_cast<int>((maxTime - minTime) * 100); // 범위를 0.01 단위로 변환
+	int randomValue = rand() % (range + 1);                  // 0 ~ range 사이의 정수 생성
+	return minTime + (randomValue / 100.0);                  // 0.01 단위로 다시 변환하여 반환
 }
