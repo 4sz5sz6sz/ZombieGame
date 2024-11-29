@@ -103,9 +103,8 @@ void CArrowKeyGameDialog::OnPaint()
 	else {
 		// 시야가 켜져 있는 상태거나 다른 스테이지일 경우
 		DrawYellowMaterials(dc); // 노란색 네모(노랑 재료) 그리기
-		DrawSafeZones(dc);       // 초록색 네모(안전 지대) 그리기
 	}
-
+	DrawSafeZones(dc);       // 초록색 네모(안전 지대) 그리기
 	DrawZombies(dc);         // 빨간색 네모 (Zombie) 그리기
 	
 
@@ -164,6 +163,8 @@ void CArrowKeyGameDialog::DrawSafeZones(CPaintDC& dc)
 {
 	for (auto& zone : safeZones) {
 		if (zone.isDestroyed) continue;
+		if (isDarknessEnabled && !isLightOn && zone.alpha == 255) continue;
+
 		int alpha = (int)(255 * zone.alpha / 255);
 		alpha = max(20, alpha);	//하한 20
 		CBrush safeZoneBrush(RGB(0, alpha, 0)); //연한 초록색.
@@ -906,7 +907,10 @@ void CArrowKeyGameDialog::DrawMaterialCount(CDC& dc) const
 	CRect textRect(textX, textY, textX + 200, textY + 30); // 텍스트 위치와 크기 설정
 
 	dc.SetBkMode(TRANSPARENT);  // 투명 배경
-	dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
+	//dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
+	// 불 꺼진 상태에서는 흰색, 그 외에는 검은색
+	if (isDarknessEnabled && !isLightOn) dc.SetTextColor(RGB(255, 255, 255));  // 흰색 텍스트
+	else dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
 	dc.DrawText(materialCountText, &textRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 }
 
