@@ -87,11 +87,27 @@ void CArrowKeyGameDialog::OnPaint()
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 	// 그리기 메시지에 대해서는 CDialogEx::OnPaint()을(를) 호출하지 마십시오.
 
-	DrawYellowMaterials(dc); //노란색 네모(노랑 재료) 그리기
-	DrawSafeZones(dc);	//초록색 네모(안전 지대) 그리기
-	DrawPlayer(dc); //파란색 네모(Player) 그리기
-	DrawZombies(dc); //빨간색 네모 (Zombie) 그리기
+	// 스테이지 6이고 시야가 꺼진 상태일 때 화면을 어둡게
+	if (currentStage == 6 && !isLightOn) {
+		CBrush darkBrush(RGB(10, 10, 10)); // 어두운 화면 색상
+		CRect rect;
+		GetClientRect(&rect); // 전체 화면 크기 가져오기
+		dc.FillRect(rect, &darkBrush); // 화면 전체를 어둡게
+	}
+	else {
+		// 시야가 켜져 있는 상태거나 다른 스테이지일 경우
+		DrawYellowMaterials(dc); // 노란색 네모(노랑 재료) 그리기
+		DrawSafeZones(dc);       // 초록색 네모(안전 지대) 그리기
+		DrawZombies(dc);         // 빨간색 네모 (Zombie) 그리기
+	}
+	
 
+	//DrawYellowMaterials(dc); //노란색 네모(노랑 재료) 그리기
+	//DrawSafeZones(dc);	//초록색 네모(안전 지대) 그리기
+	//DrawPlayer(dc); //파란색 네모(Player) 그리기
+	//DrawZombies(dc); //빨간색 네모 (Zombie) 그리기
+
+	DrawPlayer(dc);          // 파란색 네모(Player) 그리기
 	UpdateHealthBar(dc);		//11시 방향, 체력바 업데이트
 	DrawPlayerHealthText(dc);	//Player 옆, 체력 업데이트
 	DrawMaterialCount(dc); 	// 재료 카운트 출력
@@ -384,6 +400,23 @@ void CArrowKeyGameDialog::OnTimer(UINT_PTR nIDEvent)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	if (nIDEvent == 1)  // 타이머 ID가 1인 경우, UpdateMovement() 호출
 	{
+
+		auto now = std::chrono::steady_clock::now();
+
+		if (currentStage == 6) {
+			// 스테이지 6인 경우 시야 전환
+			std::chrono::duration<double> elapsed = now - lightStartTime;
+			if (elapsed.count() >= 3.0) {
+				isLightOn = !isLightOn; // 상태 전환
+				lightStartTime = now;  // 타이머 리셋
+			}
+		}
+		else {
+			isLightOn = true; // 다른 스테이지에서는 항상 시야 ON
+		}
+
+
+
 		for (auto& zombie : zombies) {
 			zombie.MoveTowards(player.x, player.y,zombies,safeZones, isZombieFlipEnabled);
 		}
@@ -816,15 +849,19 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		safeZones.push_back(CRect(300, 300, 400, 400));
 		//safeZones.push_back(CRect(500, 600, 700, 800));
 		activeSafeZoneCount = (int)safeZones.size();
-		zombies.push_back(CZombie(12, 10, 1));
-		zombies.push_back(CZombie(15, 10, 2));
-		zombies.push_back(CZombie(10, 15, 3));
-		GenerateYellowMaterials(7);           // 노랑재료 7개 생성
+		zombies.push_back(CZombie(40, 20, 1,0.1));
+		zombies.push_back(CZombie(12, 20, 2,0.1));
+		zombies.push_back(CZombie(30, 30, 3,0.1));
+		zombies.push_back(CZombie(40, 40, 4,0.1));
+		zombies.push_back(CZombie(70, 10, 5,0.1));
+		
+		
+		GenerateYellowMaterials(27);           // 노랑재료 7개 생성
 		//가장자리에 3개 생성
 		GenerateYellowMaterialAt(76.0, 1.0);
 		GenerateYellowMaterialAt(75.6, 44.0);
 		GenerateYellowMaterialAt(2.0, 45.0);
-		requiredMaterialCount = 10;				// 목표 재료 수
+		requiredMaterialCount = 30;				// 목표 재료 수
 		break;
 	}
 	
@@ -856,6 +893,8 @@ BOOL CArrowKeyGameDialog::OnInitDialog()
 
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
 	InitializeStage(currentStage);	//각 스테이지 별 환경 설정. //GetClientRect(&clientRect); 때문에 위치변.
+	isLightOn = true; // 시작 시 시야 ON
+	lightStartTime = std::chrono::steady_clock::now();
 	MoveWindow(0, 0, stageWidth, stageHeight);
 
 	return TRUE;  // return TRUE unless you set the focus to a control

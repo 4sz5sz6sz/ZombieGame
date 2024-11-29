@@ -117,4 +117,7 @@ public:
 	bool isGodModeEnabled; // 치트: 무적 모드
 	bool isSpeedBoostEnabled; // 치트: 이동 속도 증가
 	bool isZombieFlipEnabled; // 치트: 좀비 이동 방향 반전 상태
+	
+	bool isLightOn; // 현재 시야 상태 (true: 시야 ON, false: 어둠 상태)
+	std::chrono::steady_clock::time_point lightStartTime; // 시야 전환 시간
 };
