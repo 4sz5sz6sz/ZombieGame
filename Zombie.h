@@ -26,6 +26,9 @@ public:
     void MoveTowards(double playerX, double playerY, const std::vector<CZombie>& zombies, const std::vector<CSafeZone>& safeZones, bool isZombieFlipEnabled) {
         double dx = 0.0, dy = 0.0;
 
+        //ALT키 상태 확인
+        bool isCKeyPressed = (GetAsyncKeyState('C') & 0x8000) != 0;
+
         if (rand() % 3 == 0) {
             // 33% 확률로 랜덤 이동
             int randomDirection = rand() % 4;  // 0: 상, 1: 하, 2: 좌, 3: 우
@@ -37,12 +40,15 @@ public:
             }
         }
         else {
-            // 플레이어 방향으로 이동
-            if ((x < playerX)^ isZombieFlipEnabled) dx = zombieSpeed;
-            else if ((x > playerX)^ isZombieFlipEnabled) dx = -zombieSpeed;
+            //
+            bool reverseDirection = isZombieFlipEnabled && isCKeyPressed;
 
-            if ((y < playerY)^ isZombieFlipEnabled) dy = zombieSpeed;
-            else if ((y > playerY)^ isZombieFlipEnabled) dy = -zombieSpeed;
+            // 플레이어 방향으로 이동
+            if ((x < playerX)^ reverseDirection) dx = zombieSpeed;
+            else if ((x > playerX)^ reverseDirection) dx = -zombieSpeed;
+
+            if ((y < playerY)^ reverseDirection) dy = zombieSpeed;
+            else if ((y > playerY)^ reverseDirection) dy = -zombieSpeed;
         }
 
         if (dx && dy) {
