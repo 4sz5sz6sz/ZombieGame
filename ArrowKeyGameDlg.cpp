@@ -202,7 +202,9 @@ void CArrowKeyGameDialog::DrawMessageLog(CPaintDC& dc)
 		CString message = messages[i];
 		CRect messageRect(startX, startY + i * lineHeight, startX + 300, startY + (i + 1) * lineHeight);
 		dc.SetBkMode(TRANSPARENT);
-		dc.SetTextColor(RGB(0, 0, 0)); // 흰색 텍스트
+		// 불 꺼진 상태에서는 흰색, 그 외에는 검은색
+		if (isDarknessEnabled && !isLightOn) dc.SetTextColor(RGB(255, 255, 255));  // 흰색 텍스트
+		else dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
 		dc.DrawText(message, &messageRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	}
 }
@@ -620,8 +622,10 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 			++collectedYellowMaterialCount;
 
 			CString debugMsg;
-			debugMsg.Format(_T("재료를 획득했습니다! 현재 획득한 재료 수: %d\n"), collectedYellowMaterialCount);
-			//CMessageManager::GetInstance().AddMessage(debugMsg);
+			//debugMsg.Format(_T("재료 획득! 현재 획득한 재료 수: %d\n"), collectedYellowMaterialCount);
+			debugMsg.Format(_T("재료 획득! (%d/%d)"), collectedYellowMaterialCount, requiredMaterialCount);
+
+			CMessageManager::GetInstance().AddMessage(debugMsg);
 			OutputDebugString(debugMsg);
 
 			// 게임 목표 달성 확인
@@ -907,7 +911,6 @@ void CArrowKeyGameDialog::DrawMaterialCount(CDC& dc) const
 	CRect textRect(textX, textY, textX + 200, textY + 30); // 텍스트 위치와 크기 설정
 
 	dc.SetBkMode(TRANSPARENT);  // 투명 배경
-	//dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
 	// 불 꺼진 상태에서는 흰색, 그 외에는 검은색
 	if (isDarknessEnabled && !isLightOn) dc.SetTextColor(RGB(255, 255, 255));  // 흰색 텍스트
 	else dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
