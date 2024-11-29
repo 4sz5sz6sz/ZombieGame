@@ -75,7 +75,6 @@ void CMachineDlg::PrintPicture_Good()
 
 
 
-
 void CMachineDlg::EndCheck()
 {
 	// TODO: 여기에 구현 코드 추가.
