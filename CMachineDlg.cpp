@@ -8,7 +8,7 @@
 
 
 // CMachineDlg 대화 상자
-
+bool see_ending = false;
 IMPLEMENT_DYNAMIC(CMachineDlg, CDialogEx)
 
 CMachineDlg::CMachineDlg(CWnd* pParent /*=nullptr*/)
@@ -79,7 +79,7 @@ void CMachineDlg::PrintPicture_Good()
 void CMachineDlg::EndCheck()
 {
 	// TODO: 여기에 구현 코드 추가.
-
+	
 	CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
 	m_picEnd.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
 	CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
@@ -97,7 +97,7 @@ void CMachineDlg::EndCheck()
 			AfxMessageBox(_T("좀비 치료에 성공하였다."));
 			//PrintPicture_Good();
 			image.Load(_T("ending_happy.png"));//이미지 로드
-
+			see_ending = true;
 			image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
 			ReleaseDC(dc);//DC 해제
 		}
@@ -106,7 +106,7 @@ void CMachineDlg::EndCheck()
 			m_listVaccineMachine.ResetContent();
 			//PrintPicture();
 			image.Load(_T("ending_bad.png"));//이미지 로드
-
+			see_ending = true;
 			image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
 			ReleaseDC(dc);//DC 해제
 		}
@@ -116,7 +116,7 @@ void CMachineDlg::EndCheck()
 		m_listVaccineMachine.ResetContent();
 		//PrintPicture();
 		image.Load(_T("ending_bad.png"));//이미지 로드
-
+		see_ending = true;
 		image.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
 		ReleaseDC(dc);//DC 해제
 	}
@@ -125,11 +125,13 @@ void CMachineDlg::EndCheck()
 
 void CMachineDlg::OnBnClickedCancel()
 {
-	if (m_listVaccineMachine.GetCount()) {
+	if (m_listVaccineMachine.GetCount() && !see_ending) {
 		MessageBox(_T("백신 제조 기계에 물약이 남아 있는거 같아."), _T("잠깐!"), MB_ICONWARNING);
 	}
 	else {
 		int i;
+		if (see_ending)
+			m_strMachineInven[m_listMachineInven.GetCount()] = "엔딩";
 		for (i = 0; i < m_listMachineInven.GetCount(); i++) {
 			m_listMachineInven.GetText(i, m_strMachineInven[i]);
 		}

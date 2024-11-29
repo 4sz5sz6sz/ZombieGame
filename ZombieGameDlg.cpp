@@ -287,6 +287,8 @@ void CZombieGameDlg::OnBnClickedButtonVaccineManfacturingMachine()
 			if (m_strInven[i].GetLength() >= 1) {
 				m_listInven.AddString(m_strInven[i]);
 			}
+			if(pMachine->m_strMachineInven[i] == "엔딩")
+				EndDialog(0);
 		}
 	}
 
