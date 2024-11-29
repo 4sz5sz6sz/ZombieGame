@@ -38,6 +38,10 @@ public:
 	//double playerY;	//네모의 위치
 	int squareSize;	//네모의 크기
 	afx_msg void OnPaint();
+	void DrawZombies(CPaintDC& dc);
+	void DrawPlayer(CPaintDC& dc);
+	void DrawSafeZones(CPaintDC& dc);
+	void DrawYellowMaterials(CPaintDC& dc);
 	void DrawMessageLog(CPaintDC& dc);		//알림 메시지 출력
 	void DrawCooldownOnSafeZone(CPaintDC& dc);	//최근에 생성된 안전지대 위에 쿨타임 출력
 	void DrawPlayerHealthText(CPaintDC& dc) const;	//Player 옆, 체력바 업데이트

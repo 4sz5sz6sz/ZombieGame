@@ -87,44 +87,10 @@ void CArrowKeyGameDialog::OnPaint()
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 	// 그리기 메시지에 대해서는 CDialogEx::OnPaint()을(를) 호출하지 마십시오.
 
-	for (auto& material : yellowMaterials) {
-		if (!material.collected) {
-			dc.FillSolidRect(
-				static_cast<int>(material.x * SCALE_FACTOR),
-				static_cast<int>(material.y * SCALE_FACTOR),
-				SCALE_FACTOR,
-				SCALE_FACTOR,
-				RGB(255, 255, 0)); //노랑색 네모 그리기
-		}
-	}
-	
-	for (auto& zone : safeZones) {
-		if (zone.isDestroyed) continue;
-		int alpha = (int)(255 * zone.alpha / 255);
-		alpha = max(20, alpha);	//하한 20
-		CBrush safeZoneBrush(RGB(0, alpha, 0)); //연한 초록색.
-		dc.FillRect(zone.rect, &safeZoneBrush);
-		
-	}
-
-	//파란색 네모 그리기
-	dc.FillSolidRect(
-		static_cast<int>(player.x * SCALE_FACTOR),
-		static_cast<int>(player.y * SCALE_FACTOR),
-		SCALE_FACTOR, 
-		SCALE_FACTOR, 
-		RGB(0, 0, 255)
-	); //파란색 네모
-
-	for (auto& zombie : zombies) {
-		dc.FillSolidRect(static_cast<int>(zombie.x * SCALE_FACTOR),
-			static_cast<int>(zombie.y * SCALE_FACTOR),
-			SCALE_FACTOR, 
-			SCALE_FACTOR, 
-			RGB(255, 0, 0)	//빨간색 네모
-		);
-	}
-
+	DrawYellowMaterials(dc); //노란색 네모(노랑 재료) 그리기
+	DrawSafeZones(dc);	//초록색 네모(안전 지대) 그리기
+	DrawPlayer(dc); //파란색 네모(Player) 그리기
+	DrawZombies(dc); //빨간색 네모 (Zombie) 그리기
 
 	UpdateHealthBar(dc);		//11시 방향, 체력바 업데이트
 	DrawPlayerHealthText(dc);	//Player 옆, 체력 업데이트
@@ -133,6 +99,58 @@ void CArrowKeyGameDialog::OnPaint()
 	DrawMessageLog(dc);	//알림 메시지 출력
 
 	//DrawHUD(dc);
+}
+
+//빨간색 네모 (Zombie) 그리기
+void CArrowKeyGameDialog::DrawZombies(CPaintDC& dc)
+{
+	for (auto& zombie : zombies) {
+		dc.FillSolidRect(static_cast<int>(zombie.x * SCALE_FACTOR),
+			static_cast<int>(zombie.y * SCALE_FACTOR),
+			SCALE_FACTOR,
+			SCALE_FACTOR,
+			RGB(255, 0, 0)	//빨간색 네모
+		);
+	}
+}
+
+//파란색 네모(Player) 그리기
+void CArrowKeyGameDialog::DrawPlayer(CPaintDC& dc)
+{
+	dc.FillSolidRect(
+		static_cast<int>(player.x * SCALE_FACTOR),
+		static_cast<int>(player.y * SCALE_FACTOR),
+		SCALE_FACTOR,
+		SCALE_FACTOR,
+		RGB(0, 0, 255)
+	);
+}
+
+//초록색 네모(안전 지대) 그리기
+void CArrowKeyGameDialog::DrawSafeZones(CPaintDC& dc)
+{
+	for (auto& zone : safeZones) {
+		if (zone.isDestroyed) continue;
+		int alpha = (int)(255 * zone.alpha / 255);
+		alpha = max(20, alpha);	//하한 20
+		CBrush safeZoneBrush(RGB(0, alpha, 0)); //연한 초록색.
+		dc.FillRect(zone.rect, &safeZoneBrush);
+	}
+}
+
+//노란색 네모(노랑 재료) 그리기
+void CArrowKeyGameDialog::DrawYellowMaterials(CPaintDC& dc)
+{
+	for (auto& material : yellowMaterials) {
+		if (!material.collected) {
+			dc.FillSolidRect(
+				static_cast<int>(material.x * SCALE_FACTOR),
+				static_cast<int>(material.y * SCALE_FACTOR),
+				SCALE_FACTOR,
+				SCALE_FACTOR,
+				RGB(255, 255, 0));
+		}
+	}
 }
 
 //알림 메시지 출력
