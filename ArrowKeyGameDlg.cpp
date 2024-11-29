@@ -1,6 +1,4 @@
 ﻿// ArrowKeyGameDlg.cpp: 구현 파일
-//
-//OutputDebugString(_T("테스트내용\n"));
 
 #include "pch.h"
 #include "ZombieGame.h"
@@ -20,7 +18,7 @@
 
 IMPLEMENT_DYNAMIC(CArrowKeyGameDialog, CDialogEx)
 
-CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled, bool isSpeedBoostEnabled, bool isZombieFlipEnabled, CWnd* pParent /*=nullptr*/)
+CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled, bool isSpeedBoostEnabled, bool isZombieFlipEnabled, bool isDarknessEnabled, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ARROW_KEY_DIALOG, pParent),
 	player(0, 0),	//어차피 나중에 초기화함.
 	remainingCooldownTime(0),
@@ -33,6 +31,7 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled,
 	this->isGodModeEnabled = isGodModeEnabled;
 	this->isSpeedBoostEnabled = isSpeedBoostEnabled;
 	this->isZombieFlipEnabled = isZombieFlipEnabled;
+	this->isDarknessEnabled = isDarknessEnabled;
 	isGameOver = false;
 	squareSize = 20;         // 네모의 크기
 	m_ptLocation = (0, 0);
@@ -52,6 +51,15 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled,
 	if (isSpeedBoostEnabled) {
 		moveSpeed = 0.8; // 기본 속도보다 증가
 	}
+
+	// "어둠" 설정 관련 초기화.
+	srand((unsigned int)time(NULL));
+	isLightOn = true; // 시작 시 시야 ON
+	lightStartTime = std::chrono::steady_clock::now();
+	currentLightningDuration = GenerateRandomTime(0.5, 1.5);
+	currentDarkDuration = GenerateRandomTime(2.0, 5.0);
+	
+	startTime = std::chrono::steady_clock::now(); // 시작 시간 저장
 
 	//UINT_PTR m_nTimerID;
 
@@ -87,8 +95,8 @@ void CArrowKeyGameDialog::OnPaint()
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 	// 그리기 메시지에 대해서는 CDialogEx::OnPaint()을(를) 호출하지 마십시오.
 
-	// 스테이지 6이고 시야가 꺼진 상태일 때 화면을 어둡게
-	if (currentStage == 6 && !isLightOn) {
+	// 시야가 꺼진 상태일 때 화면을 어둡게
+	if (!isLightOn) {
 		CBrush darkBrush(RGB(10, 10, 10)); // 어두운 화면 색상
 		CRect rect;
 		GetClientRect(&rect); // 전체 화면 크기 가져오기
@@ -97,9 +105,8 @@ void CArrowKeyGameDialog::OnPaint()
 	else {
 		// 시야가 켜져 있는 상태거나 다른 스테이지일 경우
 		DrawYellowMaterials(dc); // 노란색 네모(노랑 재료) 그리기
-		DrawSafeZones(dc);       // 초록색 네모(안전 지대) 그리기
 	}
-
+	DrawSafeZones(dc);       // 초록색 네모(안전 지대) 그리기
 	DrawZombies(dc);         // 빨간색 네모 (Zombie) 그리기
 	
 
@@ -107,13 +114,13 @@ void CArrowKeyGameDialog::OnPaint()
 	//DrawSafeZones(dc);	//초록색 네모(안전 지대) 그리기
 	//DrawPlayer(dc); //파란색 네모(Player) 그리기
 	//DrawZombies(dc); //빨간색 네모 (Zombie) 그리기
-
 	DrawPlayer(dc);          // 파란색 네모(Player) 그리기
 	UpdateHealthBar(dc);		//11시 방향, 체력바 업데이트
 	DrawPlayerHealthText(dc);	//Player 옆, 체력 업데이트
 	DrawMaterialCount(dc); 	// 재료 카운트 출력
 	DrawCooldownOnSafeZone(dc);	//최근에 생성된 안전지대 위에 쿨타임 출력
 	DrawMessageLog(dc);	//알림 메시지 출력
+	DrawElapsedTime(dc); // 경과 시간 출력
 
 	//DrawHUD(dc);
 }
@@ -125,8 +132,8 @@ void CArrowKeyGameDialog::DrawZombies(CPaintDC& dc)
 
 
 	for (auto& zombie : zombies) {
-		// 스테이지 6에서 불이 꺼져 있을 때만 거리 제한 적용
-		if (currentStage == 6 && !isLightOn) {
+		// 불이 꺼져 있을 때만 거리 제한 적용
+		if (!isLightOn) {
 			if (!player.CheckCollision(player.x, player.y, zombie, detectionRange)) {
 				continue; // 거리가 멀면 출력하지 않음
 			}
@@ -158,6 +165,8 @@ void CArrowKeyGameDialog::DrawSafeZones(CPaintDC& dc)
 {
 	for (auto& zone : safeZones) {
 		if (zone.isDestroyed) continue;
+		if (isDarknessEnabled && !isLightOn && zone.alpha == 255) continue;
+
 		int alpha = (int)(255 * zone.alpha / 255);
 		alpha = max(20, alpha);	//하한 20
 		CBrush safeZoneBrush(RGB(0, alpha, 0)); //연한 초록색.
@@ -195,7 +204,9 @@ void CArrowKeyGameDialog::DrawMessageLog(CPaintDC& dc)
 		CString message = messages[i];
 		CRect messageRect(startX, startY + i * lineHeight, startX + 300, startY + (i + 1) * lineHeight);
 		dc.SetBkMode(TRANSPARENT);
-		dc.SetTextColor(RGB(0, 0, 0)); // 흰색 텍스트
+		// 불 꺼진 상태에서는 흰색, 그 외에는 검은색
+		if (isDarknessEnabled && !isLightOn) dc.SetTextColor(RGB(255, 255, 255));  // 흰색 텍스트
+		else dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
 		dc.DrawText(message, &messageRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	}
 }
@@ -388,7 +399,6 @@ int CArrowKeyGameDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	cooldownProgressBar.SetPos(0);  // 초기값 설정
 	//cooldownProgressBar.SendMessage(PBM_SETBARCOLOR, 0, RGB(255, 0, 0)); // 빨간색 설정했는데... 안 먹힘..
 
-	
 	SetTimer(1, 30, NULL);	//30ms에 한번 업데이트.//16으로 설정하면 60fps
 
 	return 0;
@@ -414,7 +424,7 @@ void CArrowKeyGameDialog::OnTimer(UINT_PTR nIDEvent)
 		auto now = std::chrono::steady_clock::now();
 		std::chrono::duration<double> elapsed = now - lightStartTime;
 
-		if (currentStage == 6) {
+		if (isDarknessEnabled) {	//6단계 이거나, 치트가 적용되었으면 true
 			// 6단계에서만 번개 효과 적용
 			if (isLightOn) {
 				// 번개 효과: ON 상태에서 지속 시간 체크
@@ -437,20 +447,6 @@ void CArrowKeyGameDialog::OnTimer(UINT_PTR nIDEvent)
 			// 다른 스테이지에서는 항상 시야 ON
 			isLightOn = true;
 		}
-
-		//if (currentStage == 6) {
-		//	// 스테이지 6인 경우 시야 전환
-		//	std::chrono::duration<double> elapsed = now - lightStartTime;
-		//	if (elapsed.count() >= 3.0) {
-		//		isLightOn = !isLightOn; // 상태 전환
-		//		lightStartTime = now;  // 타이머 리셋
-		//	}
-		//}
-		//else {
-		//	isLightOn = true; // 다른 스테이지에서는 항상 시야 ON
-		//}
-
-
 
 		for (auto& zombie : zombies) {
 			zombie.MoveTowards(player.x, player.y,zombies,safeZones, isZombieFlipEnabled);
@@ -628,8 +624,10 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 			++collectedYellowMaterialCount;
 
 			CString debugMsg;
-			debugMsg.Format(_T("재료를 획득했습니다! 현재 획득한 재료 수: %d\n"), collectedYellowMaterialCount);
-			//CMessageManager::GetInstance().AddMessage(debugMsg);
+			//debugMsg.Format(_T("재료 획득! 현재 획득한 재료 수: %d\n"), collectedYellowMaterialCount);
+			debugMsg.Format(_T("재료 획득! (%d/%d)"), collectedYellowMaterialCount, requiredMaterialCount);
+
+			CMessageManager::GetInstance().AddMessage(debugMsg);
 			OutputDebugString(debugMsg);
 
 			// 게임 목표 달성 확인
@@ -800,11 +798,6 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		safeZones.push_back(CRect(800, 200, 1500, 220));
 		safeZones.push_back(CRect(100, 100, 130, 800));*/
 
-		
-		
-		
-	
-		
 		activeSafeZoneCount = (int)safeZones.size();
 
 		zombies.push_back(CZombie(12, 10, 1,0.3));
@@ -878,25 +871,28 @@ void CArrowKeyGameDialog::InitializeStage(int stageNumber)
 		// Stage 6 설정
 		player.x = 7;
 		player.y = 7;
-		stageWidth = 1600;
-		stageHeight = 1000;
+		stageWidth = 800;
+		stageHeight = 600;
+
 		safeZones.push_back(CRect(100, 100, 200, 200));
 		safeZones.push_back(CRect(300, 300, 400, 400));
-		//safeZones.push_back(CRect(500, 600, 700, 800));
 		activeSafeZoneCount = (int)safeZones.size();
-		zombies.push_back(CZombie(40, 20, 1,0.5));
-		zombies.push_back(CZombie(12, 20, 2,0.4));
-		zombies.push_back(CZombie(30, 30, 3,0.5));
-		zombies.push_back(CZombie(40, 40, 4,0.4));
-		zombies.push_back(CZombie(70, 10, 5,0.4));
+
+		zombies.push_back(CZombie(40, 20, 1,0.6));
+		zombies.push_back(CZombie(12, 20, 2,0.5));
+		zombies.push_back(CZombie(30, 30, 3,0.6));
+		zombies.push_back(CZombie(40, 40, 4,0.5));
+		zombies.push_back(CZombie(70, 10, 5,0.5));
 		
 		
-		GenerateYellowMaterials(27);           // 노랑재료 7개 생성
+		GenerateYellowMaterials(10);           // 노랑재료 30개 생성
 		//가장자리에 3개 생성
-		GenerateYellowMaterialAt(76.0, 1.0);
+		/*GenerateYellowMaterialAt(76.0, 1.0);
 		GenerateYellowMaterialAt(75.6, 44.0);
 		GenerateYellowMaterialAt(2.0, 45.0);
-		requiredMaterialCount = 30;				// 목표 재료 수
+		1600*1200 기준
+		*/
+		requiredMaterialCount = 10;				// 목표 재료 수
 		break;
 	}
 	
@@ -917,7 +913,9 @@ void CArrowKeyGameDialog::DrawMaterialCount(CDC& dc) const
 	CRect textRect(textX, textY, textX + 200, textY + 30); // 텍스트 위치와 크기 설정
 
 	dc.SetBkMode(TRANSPARENT);  // 투명 배경
-	dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
+	// 불 꺼진 상태에서는 흰색, 그 외에는 검은색
+	if (isDarknessEnabled && !isLightOn) dc.SetTextColor(RGB(255, 255, 255));  // 흰색 텍스트
+	else dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
 	dc.DrawText(materialCountText, &textRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 }
 
@@ -928,14 +926,7 @@ BOOL CArrowKeyGameDialog::OnInitDialog()
 
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
 	InitializeStage(currentStage);	//각 스테이지 별 환경 설정. //GetClientRect(&clientRect); 때문에 위치변.
-
-	isLightOn = true; // 시작 시 시야 ON
-	lightStartTime = std::chrono::steady_clock::now();
-	currentLightningDuration = GenerateRandomTime(0.5, 1.5);
-	currentDarkDuration = GenerateRandomTime(2.0, 5.0);
 	MoveWindow(0, 0, stageWidth, stageHeight);
-
-	srand((unsigned int)time(NULL));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
@@ -1013,4 +1004,33 @@ double CArrowKeyGameDialog::GenerateRandomTime(double minTime, double maxTime)
 	int range = static_cast<int>((maxTime - minTime) * 100); // 범위를 0.01 단위로 변환
 	int randomValue = rand() % (range + 1);                  // 0 ~ range 사이의 정수 생성
 	return minTime + (randomValue / 100.0);                  // 0.01 단위로 다시 변환하여 반환
+}
+
+
+void CArrowKeyGameDialog::DrawElapsedTime(CDC& dc)
+{
+	// TODO: 여기에 구현 코드 추가.
+	// 경과 시간 계산
+	auto now = std::chrono::steady_clock::now();
+	std::chrono::duration<int> elapsedSeconds = std::chrono::duration_cast<std::chrono::seconds>(now - startTime);
+
+	int minutes = elapsedSeconds.count() / 60;
+	int seconds = elapsedSeconds.count() % 60;
+
+	// 시간 텍스트 포맷
+	CString timeText;
+	timeText.Format(_T("%02d:%02d"), minutes, seconds);
+
+	// 텍스트 위치 (상단 중앙)
+	CRect clientRect;
+	GetClientRect(&clientRect); // 창 크기 가져오기
+	int centerX = clientRect.Width() / 2;
+	int topY = 10; // 상단 여백
+	CRect textRect(centerX - 50, topY, centerX + 50, topY + 30); // 중앙 정렬 영역
+
+	// 텍스트 출력
+	dc.SetBkMode(TRANSPARENT); // 투명 배경
+	if (isDarknessEnabled && !isLightOn) dc.SetTextColor(RGB(255, 255, 255));  // 흰색 텍스트
+	else dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
+	dc.DrawText(timeText, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
