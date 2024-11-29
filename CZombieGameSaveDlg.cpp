@@ -74,7 +74,7 @@ void CZombieGameSaveDlg::OnClickedButtonOpen() // 다이얼 값이 맞는지 판
         if (check == 0) {
             check++;
             MessageBox(_T("자물쇠가 풀렸다!"), _T("덜컥!"), MB_ICONINFORMATION);
-            m_listSaveInside.AddString(_T("파란 물약"));
+            m_listSaveInside.AddString(_T("파랑 물약"));
             ifok = false;
             CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
             m_picGetBlue.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
@@ -103,7 +103,7 @@ void CZombieGameSaveDlg::OnClickedButtonItemMove1()
         m_listSaveInside.GetText(leftIndex, str);
         m_listSaveInside.DeleteString(leftIndex);
         m_listChestInven.AddString(str);
-        if (str == "파란 물약")
+        if (str == "파랑 물약")
             ifok = true;
     }
 }

@@ -151,6 +151,12 @@ void CZombieGameChestDlg::OnClickedButtonClear()
 	}
 }
 
+void CZombieGameChestDlg::OnClickedButtonBack()
+{
+	int nCount = m_listAnswer.GetCount();
+	m_listAnswer.DeleteString(nCount - 1);
+}
+
 
 void CZombieGameChestDlg::OnClickedButtonItmeMove2()
 {
@@ -194,9 +200,3 @@ BOOL CZombieGameChestDlg::OnInitDialog()
 	// 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }
 
-
-void CZombieGameChestDlg::OnClickedButtonBack()
-{
-	int nCount = m_listAnswer.GetCount();
-		m_listAnswer.DeleteString(nCount-1);
-}
