@@ -124,4 +124,7 @@ public:
 	double GenerateRandomTime(double minTime, double maxTime); // 일정 범위 내의 실수값 출력.
 	double currentLightningDuration; // 불빛 지속 시간
 	double currentDarkDuration; // 어둠 지속 시간
+	
+	std::chrono::steady_clock::time_point startTime; // 게임 시작 시각
+	void DrawElapsedTime(CDC& dc);
 };

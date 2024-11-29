@@ -58,6 +58,8 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled,
 	lightStartTime = std::chrono::steady_clock::now();
 	currentLightningDuration = GenerateRandomTime(0.5, 1.5);
 	currentDarkDuration = GenerateRandomTime(2.0, 5.0);
+	
+	startTime = std::chrono::steady_clock::now(); // 시작 시간 저장
 
 	//UINT_PTR m_nTimerID;
 
@@ -112,13 +114,13 @@ void CArrowKeyGameDialog::OnPaint()
 	//DrawSafeZones(dc);	//초록색 네모(안전 지대) 그리기
 	//DrawPlayer(dc); //파란색 네모(Player) 그리기
 	//DrawZombies(dc); //빨간색 네모 (Zombie) 그리기
-
 	DrawPlayer(dc);          // 파란색 네모(Player) 그리기
 	UpdateHealthBar(dc);		//11시 방향, 체력바 업데이트
 	DrawPlayerHealthText(dc);	//Player 옆, 체력 업데이트
 	DrawMaterialCount(dc); 	// 재료 카운트 출력
 	DrawCooldownOnSafeZone(dc);	//최근에 생성된 안전지대 위에 쿨타임 출력
 	DrawMessageLog(dc);	//알림 메시지 출력
+	DrawElapsedTime(dc); // 경과 시간 출력
 
 	//DrawHUD(dc);
 }
@@ -1002,4 +1004,33 @@ double CArrowKeyGameDialog::GenerateRandomTime(double minTime, double maxTime)
 	int range = static_cast<int>((maxTime - minTime) * 100); // 범위를 0.01 단위로 변환
 	int randomValue = rand() % (range + 1);                  // 0 ~ range 사이의 정수 생성
 	return minTime + (randomValue / 100.0);                  // 0.01 단위로 다시 변환하여 반환
+}
+
+
+void CArrowKeyGameDialog::DrawElapsedTime(CDC& dc)
+{
+	// TODO: 여기에 구현 코드 추가.
+	// 경과 시간 계산
+	auto now = std::chrono::steady_clock::now();
+	std::chrono::duration<int> elapsedSeconds = std::chrono::duration_cast<std::chrono::seconds>(now - startTime);
+
+	int minutes = elapsedSeconds.count() / 60;
+	int seconds = elapsedSeconds.count() % 60;
+
+	// 시간 텍스트 포맷
+	CString timeText;
+	timeText.Format(_T("%02d:%02d"), minutes, seconds);
+
+	// 텍스트 위치 (상단 중앙)
+	CRect clientRect;
+	GetClientRect(&clientRect); // 창 크기 가져오기
+	int centerX = clientRect.Width() / 2;
+	int topY = 10; // 상단 여백
+	CRect textRect(centerX - 50, topY, centerX + 50, topY + 30); // 중앙 정렬 영역
+
+	// 텍스트 출력
+	dc.SetBkMode(TRANSPARENT); // 투명 배경
+	if (isDarknessEnabled && !isLightOn) dc.SetTextColor(RGB(255, 255, 255));  // 흰색 텍스트
+	else dc.SetTextColor(RGB(0, 0, 0));  // 검은색 텍스트
+	dc.DrawText(timeText, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
