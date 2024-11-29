@@ -266,7 +266,7 @@ void CZombieGameDlg::OnClickedButtonChest()
 	{
 		m_dlgZGChest.ShowWindow(SW_HIDE);
 		m_dlgZGChest.DestroyWindow();
-		m_bChestButton = FALSE;
+		m_bChestButton = FALSE; 
 	}
 }
 

@@ -94,7 +94,7 @@ void CZombieGameChestDlg::OnClickedButtonCheck()
 				ch++;
 		}
 	}
-	if (ch == nCount && nCount != 0) {
+	if (ch == nCount && nCount == 17) {
 		if (flag == 0) {
 			flag++;
 			MessageBox(_T("금고 문이 열렸다!"), _T("덜컥!"), MB_ICONINFORMATION);
