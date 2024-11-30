@@ -24,6 +24,10 @@ public:
         return messages;
     }
 
+    void ClearMessages() {
+        messages.clear(); // 메시지 목록 초기화
+    }
+
 private:
     CMessageManager() {} // 생성자 비공개
 };

@@ -60,7 +60,7 @@ CArrowKeyGameDialog::CArrowKeyGameDialog(int stageNumber, bool isGodModeEnabled,
 	currentDarkDuration = GenerateRandomTime(2.0, 5.0);
 	
 	startTime = std::chrono::steady_clock::now(); // 시작 시간 저장
-
+	CMessageManager::GetInstance().ClearMessages();	//상태메시지 초기화
 	//UINT_PTR m_nTimerID;
 
 }
@@ -632,9 +632,9 @@ void CArrowKeyGameDialog::CheckPlayerMaterialCollision()
 
 			// 게임 목표 달성 확인
 			if (isGameOver != true && collectedYellowMaterialCount >= requiredMaterialCount) {
+				isGameOver = true;
 				OutputDebugString(_T("목표 달성! 모든 재료를 획득했습니다!\n"));
 				AfxMessageBox(_T("목표 달성! 모든 재료를 획득했습니다!"));
-				isGameOver = true;
 
 				// CStageMenuDialog에 클리어 정보 전달
 				CStageMenuDialog* pStageDialog = dynamic_cast<CStageMenuDialog*>(GetParent());
