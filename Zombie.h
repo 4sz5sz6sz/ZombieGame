@@ -26,7 +26,7 @@ public:
     void MoveTowards(double playerX, double playerY, const std::vector<CZombie>& zombies, const std::vector<CSafeZone>& safeZones, bool isZombieFlipEnabled) {
         double dx = 0.0, dy = 0.0;
 
-        //ALT키 상태 확인
+        //C키 상태 확인
         bool isCKeyPressed = (GetAsyncKeyState('C') & 0x8000) != 0;
 
         if (rand() % 3 == 0) {

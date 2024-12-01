@@ -137,7 +137,6 @@ void CStageMenuDialog::OnBnClickedStartButton() {
         // 스테이지 시작 코드 작성
         CArrowKeyGameDialog arrowKeyGameDialog(selectedStage,isGodModeEnabled, isSpeedBoostEnabled, isZombieFlipEnabled, isDarknessEnabled); //생성자에 스테이지 전달
         arrowKeyGameDialog.DoModal();
-        /*EndDialog(IDOK);*/
     }
 }
 
